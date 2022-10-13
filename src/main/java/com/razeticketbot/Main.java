@@ -2,18 +2,15 @@ package com.razeticketbot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.Interaction;
-import org.javacord.api.interaction.MessageComponentInteraction;
 
 import java.util.Arrays;
 import java.util.List;
