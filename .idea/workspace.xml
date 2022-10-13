@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="475be32a-f445-4dbf-9b1a-ea06b49dc419" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +71,7 @@
       <updated>1665667467004</updated>
       <workItem from="1665667471525" duration="1243000" />
       <workItem from="1665668723749" duration="5214000" />
-      <workItem from="1665683590406" duration="6172000" />
+      <workItem from="1665683590406" duration="6509000" />
     </task>
     <servers />
   </component>

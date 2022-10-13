@@ -9,6 +9,7 @@ import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.Interaction;
+import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -19,7 +20,6 @@ public class Main {
     };
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
-
     public static ServerTextChannel createChannel(Server server, String ticketType, ChannelCategory category) {
         return new ServerTextChannelBuilder(server)
                 .setName(ticketType)
@@ -32,6 +32,12 @@ public class Main {
                 .setName(name)
                 .create()
                 .join();
+    }
+    public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel) {
+        new MessageBuilder()
+                .setContent("Select an option of this list!")
+                .addComponents(ActionRow.of(SelectMenu.create("Ticket Types", "Click here to choose which ticket you want to open", 0, 1, options)))
+                .send(channel);
     }
     public static void main(String[] args) {
 
@@ -50,11 +56,7 @@ public class Main {
         api.addMessageCreateListener(event -> {
             if (event.getMessageContent().equalsIgnoreCase("ticket buildMenu")) {
                 TextChannel channel = event.getChannel();
-                event.getChannel().sendMessage("building the dropdown");
-                new MessageBuilder()
-                        .setContent("Select an option of this list!")
-                        .addComponents(ActionRow.of(SelectMenu.create("Ticket Types", "Click here to choose which ticket you want to open", 0, 1, options)))
-                        .send(channel);
+                sendMenuToChannel(options, channel);
             }
         });
 
