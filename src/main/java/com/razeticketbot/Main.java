@@ -7,37 +7,83 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
+import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.Interaction;
 import org.w3c.dom.Text;
 
+import java.security.Permission;
 import java.util.*;
 
 public class Main {
+    final static String MAKE_A_TICKET_CATEGORY = "support";
+    final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
     // Create data structure of tickets for dropdown
     final static Ticket[] tickets = {new Ticket("General Support", "general_support", "Click here to choose general support ticket"),
                                      new Ticket("Player Report", "player_report", "Click here to choose player report ticket"),
     };
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
-    public static ServerTextChannel createChannel(Server server, String ticketType, ChannelCategory category) {
+
+    // function to create a channel
+    public static ServerTextChannel createChannel(Server server, String channelName, ChannelCategory category) {
         return new ServerTextChannelBuilder(server)
-                .setName(ticketType)
+                .setName(channelName)
                 .setCategory(category)
                 .create()
                 .join();
     }
+
+    // function to create a category
     public static ChannelCategory createCategory(Server server, String name) {
         return new ChannelCategoryBuilder(server)
                 .setName(name)
                 .create()
                 .join();
     }
+    // function to send the ticket select menu to a channel;
     public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel) {
         new MessageBuilder()
                 .setContent("Select an option of this list!")
                 .addComponents(ActionRow.of(SelectMenu.create("Ticket Types", "Click here to choose which ticket you want to open", 0, 1, options)))
                 .send(channel);
+    }
+
+    // function to run whenever the bot joins a new server:
+    public static void onJoinNewServer(DiscordApi api, List<SelectMenuOption> options) {
+        Collection<Server> servers = api.getServers();
+        for(Server server : servers) {
+            Collection<ChannelCategory> categories = server.getChannelCategories();
+            boolean doesCategoryExist = false;
+            List<RegularServerChannel> channelsInMakeATicketCategory = null;
+            ChannelCategory useCategory = null;
+            for(ChannelCategory category : categories) {
+                if(Objects.equals(category.getName(), MAKE_A_TICKET_CATEGORY)) {
+                    useCategory = category;
+                    doesCategoryExist = true;
+                    channelsInMakeATicketCategory = category.getChannels();
+                    break;
+                }
+            }
+            if (!doesCategoryExist) {
+                useCategory = createCategory(server, MAKE_A_TICKET_CATEGORY);
+                channelsInMakeATicketCategory = useCategory.getChannels();
+            }
+            boolean doesChannelExist = false;
+            RegularServerChannel useChannel = null;
+            for(RegularServerChannel channel : channelsInMakeATicketCategory) {
+                if(Objects.equals(channel.getName(), MAKE_A_TICKET_CHANNEL)) {
+                    useChannel = channel;
+                    doesChannelExist = true;
+                    break;
+                }
+            }
+            if(!doesChannelExist) {
+                useChannel = createChannel(server, MAKE_A_TICKET_CHANNEL, useCategory);
+                sendMenuToChannel(options, (TextChannel) useChannel);
+            }
+
+        }
     }
     public static void main(String[] args) {
 
@@ -47,27 +93,30 @@ public class Main {
                 .login()
                 .join();
 
-        // Populate menu option list with tickets from data structure
+        // Print online + admin join link
+        System.out.println("-- BOT ONLINE -- ");
+        System.out.println("INVITE LINK : " + api.createBotInvite(Permissions.fromBitmask(8)));
+
+        // Populate the tickets list based on Ticket objects defined above.
         for(int i = 0; i < tickets.length; i++) {
             options.add(SelectMenuOption.create(tickets[i].name, tickets[i].value, tickets[i].description));
         }
-
-        // Add command listener to build the menu -- REPLACE WITH MORE ELEGANT DEPLOYMENT OF MENU!!!
-        api.addMessageCreateListener(event -> {
-            if (event.getMessageContent().equalsIgnoreCase("ticket buildMenu")) {
-                TextChannel channel = event.getChannel();
-                sendMenuToChannel(options, channel);
-            }
+        
+        // Add event to add the category, channel and message whenever bot is added to a new server.
+        api.addServerJoinListener(event -> {
+            onJoinNewServer(api, options);
         });
 
         // Handle what happens on click of menu options ( the creation of tickets )
         api.addSelectMenuChooseListener(event -> {
             List<SelectMenuOption> options = event.getSelectMenuInteraction().getChosenOptions();
             Interaction interaction = event.getInteraction();
+            // make sure that an option is selected before proceeding with creating a ticket
             if(options.size() == 0) {
                 interaction.createImmediateResponder().respond();
                 return;
             }
+            // get the type of ticket and check for the server
             String ticketType = options.get(0).getLabel();
             Optional<Server> optionalServer = interaction.getServer();
             if (optionalServer.isPresent()) {
@@ -75,6 +124,8 @@ public class Main {
                 List<ChannelCategory> categories = server.getChannelCategories();
                 boolean categoryExists = false;
                 ChannelCategory category = null;
+
+                // check if the ticket category exists
                 for (ChannelCategory channelCategory : categories) {
                     if (Objects.equals(channelCategory.getName(), ticketType)) {
                         categoryExists = true;
@@ -82,15 +133,19 @@ public class Main {
                         break;
                     }
                 }
+                // if ticket category does not exist, create it
                 if (!categoryExists) {
                     category = createCategory(server, ticketType);
                 }
-
+                // create the ticket in either the new category or existing one:
                 ServerTextChannel newTicket = createChannel(server, ticketType, category);
 
+                // respond to the client with a link to the ticket:
                 interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
                     interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
                 });
+
+                // handle very impossible occurence of the button being pressed in dms:
             } else {
                 System.out.println("interaction did not take place in a server");
             }
