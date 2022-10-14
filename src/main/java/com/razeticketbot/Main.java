@@ -7,7 +7,9 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
+import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
+import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.Interaction;
 import org.w3c.dom.Text;
@@ -42,11 +44,17 @@ public class Main {
                 .join();
     }
     // function to send the ticket select menu to a channel;
-    public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel) {
+    public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel, Server server) {
         new MessageBuilder()
                 .setContent("Select an option of this list!")
                 .addComponents(ActionRow.of(SelectMenu.create("Ticket Types", "Click here to choose which ticket you want to open", 0, 1, options)))
                 .send(channel);
+         new ServerTextChannelUpdater((ServerTextChannel) channel)
+                 .addPermissionOverwrite(server.getEveryoneRole()
+                         , new PermissionsBuilder()
+                                .setDenied(PermissionType.SEND_MESSAGES)
+                                .build())
+                 .update();
     }
 
     // function to run whenever the bot joins a new server:
@@ -80,7 +88,7 @@ public class Main {
             }
             if(!doesChannelExist) {
                 useChannel = createChannel(server, MAKE_A_TICKET_CHANNEL, useCategory);
-                sendMenuToChannel(options, (TextChannel) useChannel);
+                sendMenuToChannel(options, (TextChannel) useChannel, server);
             }
 
         }
@@ -101,7 +109,7 @@ public class Main {
         for(int i = 0; i < tickets.length; i++) {
             options.add(SelectMenuOption.create(tickets[i].name, tickets[i].value, tickets[i].description));
         }
-        
+
         // Add event to add the category, channel and message whenever bot is added to a new server.
         api.addServerJoinListener(event -> {
             onJoinNewServer(api, options);
