@@ -12,17 +12,16 @@ import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.Interaction;
-import org.w3c.dom.Text;
 
-import java.security.Permission;
 import java.util.*;
 
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
     // Create data structure of tickets for dropdown
-    final static Ticket[] tickets = {new Ticket("General Support", "general_support", "Click here to choose general support ticket"),
-                                     new Ticket("Player Report", "player_report", "Click here to choose player report ticket"),
+    final static Ticket[] tickets =
+            {new Ticket("General Support", "general_support", "Click here to choose general support ticket"),
+                    new Ticket("Player Report", "player_report", "Click here to choose player report ticket"),
     };
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
@@ -47,7 +46,11 @@ public class Main {
     public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel, Server server) {
         new MessageBuilder()
                 .setContent("Select an option of this list!")
-                .addComponents(ActionRow.of(SelectMenu.create("Ticket Types", "Click here to choose which ticket you want to open", 0, 1, options)))
+                .addComponents(ActionRow.of(SelectMenu.create("Ticket Types",
+                        "Click here to choose which ticket you want to open",
+                        0,
+                        1,
+                        options)))
                 .send(channel);
          new ServerTextChannelUpdater((ServerTextChannel) channel)
                  .addPermissionOverwrite(server.getEveryoneRole()
@@ -56,6 +59,7 @@ public class Main {
                                 .build())
                  .update();
     }
+
 
     // function to run whenever the bot joins a new server:
     public static void onJoinNewServer(DiscordApi api, List<SelectMenuOption> options) {
@@ -94,6 +98,8 @@ public class Main {
         }
     }
     public static void main(String[] args) {
+        Mongo.Connect();
+        Mongo.Test();
 
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
@@ -106,13 +112,32 @@ public class Main {
         System.out.println("INVITE LINK : " + api.createBotInvite(Permissions.fromBitmask(8)));
 
         // Populate the tickets list based on Ticket objects defined above.
-        for(int i = 0; i < tickets.length; i++) {
-            options.add(SelectMenuOption.create(tickets[i].name, tickets[i].value, tickets[i].description));
+        for(Ticket ticket : tickets) {
+            options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description));
         }
 
         // Add event to add the category, channel and message whenever bot is added to a new server.
         api.addServerJoinListener(event -> {
             onJoinNewServer(api, options);
+        });
+        api.addMessageCreateListener(event -> {
+            String message = event.getMessage().getContent().toLowerCase();
+            // add message author role check before switch statement!!!
+            // add make sure this is a ticket check for channel!!!
+            switch(message) {
+                case "ticket close":
+                    break;
+                case "ticket delete":
+                    break;
+                case "ticket save":
+                     break;
+                case "ticket lock":
+                    break;
+                case "ticket add":
+                    break;
+                case "ticket remove":
+                    break;
+            }
         });
 
         // Handle what happens on click of menu options ( the creation of tickets )
