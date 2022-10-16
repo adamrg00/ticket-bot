@@ -1,28 +1,47 @@
 package com.razeticketbot;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.javacord.api.entity.channel.ServerTextChannel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.lt;
+
 public class Mongo {
     static MongoClient mongoClient;
     static MongoDatabase ticketsDatabase;
-    static MongoCollection<Document> ticketsCollection;
-    public static void Connect() {
+    public static void ConnectToDatabase() {
         mongoClient = MongoClients.create("mongodb://localhost:27017");
         ticketsDatabase = mongoClient.getDatabase("tickets");
-        // Adjust this bit to have a different colelction for every server!!!!!!!!!
-        ticketsCollection = ticketsDatabase.getCollection("tickets");
     }
-    public static void Test() {
-        Document test = new Document("_id", new ObjectId());
-        test.append("test_key", 9999);
-        ticketsCollection.insertOne(test);
+    public static String getTicketName(String ticketType, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        MongoCursor<Document> iterator = serverTicketsCollection.find(eq("ticket-type", ticketType)).iterator();
+        int amountOfTickets = 1;
+        try {
+            while (iterator.hasNext()) {
+                amountOfTickets++;
+                iterator.next();
+            }
+        } finally {
+            iterator.close();
+        }
+        String amountOfTicketsString = Integer.toString(amountOfTickets);
+        int amountOfZeros = 5 - amountOfTicketsString.length();
+        return ticketType.replaceAll(" ", "-").toLowerCase() + "-" + "0".repeat(amountOfZeros) + amountOfTicketsString;
+    }
+    public static void createTicket(String ticketType, ServerTextChannel channel, String serverId, String ticketName) {
+    MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+    Document ticket = new Document("_id", new ObjectId());
+    ticket.append("ticket-type", ticketType);
+    ticket.append("ticket-name", ticketName);
+    ticket.append("channel-id", channel.getIdAsString());
+    ticket.append("transcript", null);
+    serverTicketsCollection.insertOne(ticket);
     }
 }

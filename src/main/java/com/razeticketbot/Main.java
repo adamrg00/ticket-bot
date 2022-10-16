@@ -98,14 +98,12 @@ public class Main {
         }
     }
     public static void main(String[] args) {
-        Mongo.Connect();
-        Mongo.Test();
-
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
                 .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.G500Kp.KIjJE1tHtx80f6IvqGoVe40k3TqJVxMp0wx9sE")
                 .login()
                 .join();
+        Mongo.ConnectToDatabase();
 
         // Print online + admin join link
         System.out.println("-- BOT ONLINE -- ");
@@ -171,7 +169,9 @@ public class Main {
                     category = createCategory(server, ticketType);
                 }
                 // create the ticket in either the new category or existing one:
-                ServerTextChannel newTicket = createChannel(server, ticketType, category);
+                String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
+                ServerTextChannel newTicket = createChannel(server, ticketName, category);
+                Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName);
 
                 // respond to the client with a link to the ticket:
                 interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
