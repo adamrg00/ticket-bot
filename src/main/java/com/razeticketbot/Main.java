@@ -125,32 +125,29 @@ public class Main {
                         new PermissionsBuilder()
                                 .setAllDenied()
                                 .build())
-                .update();
-        Permissions userPerms = newTicket.getOverwrittenPermissions(interaction.getUser());
-        new ServerTextChannelUpdater(newTicket)
                 .addPermissionOverwrite(interaction.getUser(),
-                        new PermissionsBuilder(userPerms)
+                        new PermissionsBuilder()
                                 .setAllowed(PermissionType.SEND_MESSAGES)
                                 .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
                                 .setAllowed(PermissionType.VIEW_CHANNEL)
                                 .build())
                 .update();
-        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
-            Optional<Role> role = server.getRoleById(roleId);
-            if (role.isPresent()) {
-                Role trueRole = role.get();
-                Permissions rolePerms = newTicket.getOverwrittenPermissions(trueRole);
-                new ServerTextChannelUpdater(newTicket)
-                        .addPermissionOverwrite(trueRole,
-                                new PermissionsBuilder(rolePerms)
-                                        .setAllAllowed()
-                                        .build())
-                        .update();
-                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
-            } else {
-                System.out.println("Role ID Does not exist!!!");
-            }
-        }
+//        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
+//            Optional<Role> role = server.getRoleById(roleId);
+//            if (role.isPresent()) {
+//                Role trueRole = role.get();
+//                Permissions rolePerms = newTicket.getOverwrittenPermissions(trueRole);
+//                new ServerTextChannelUpdater(newTicket)
+//                        .addPermissionOverwrite(trueRole,
+//                                new PermissionsBuilder(rolePerms)
+//                                        .setAllAllowed()
+//                                        .build())
+//                        .update();
+//                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
+//            } else {
+//                System.out.println("Role ID Does not exist!!!");
+//            }
+//        }
 
         // respond to the client with a link to the ticket:
         interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
