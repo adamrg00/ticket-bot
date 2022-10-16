@@ -10,22 +10,26 @@ import org.javacord.api.entity.message.component.SelectMenuOption;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.PermissionsBuilder;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.Interaction;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
+    final static Ticket general_support = new Ticket("General Support", "general_support", "Click here to choose general support ticket", new String[]{"1031292038265704600"});
+    final static Ticket player_report =  new Ticket("Player Report", "player_report", "Click here to choose player report ticket", new String[]{"1031292038265704600"});
+    static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
+
     // Create data structure of tickets for dropdown
-    final static Ticket[] tickets =
-            {new Ticket("General Support", "general_support", "Click here to choose general support ticket"),
-                    new Ticket("Player Report", "player_report", "Click here to choose player report ticket"),
-    };
+    final static Ticket[] tickets ={general_support, player_report};
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
-
     // function to create a channel
     public static ServerTextChannel createChannel(Server server, String channelName, ChannelCategory category) {
         return new ServerTextChannelBuilder(server)
@@ -34,7 +38,6 @@ public class Main {
                 .create()
                 .join();
     }
-
     // function to create a category
     public static ChannelCategory createCategory(Server server, String name) {
         return new ChannelCategoryBuilder(server)
@@ -59,8 +62,6 @@ public class Main {
                                 .build())
                  .update();
     }
-
-
     // function to run whenever the bot joins a new server:
     public static void onJoinNewServer(DiscordApi api, List<SelectMenuOption> options) {
         Collection<Server> servers = api.getServers();
@@ -97,47 +98,111 @@ public class Main {
 
         }
     }
+    //function that creates a ticket and stores info in db
+    public static void createTicket(Server server, String ticketType, Interaction interaction) throws ExecutionException, InterruptedException {
+        List<ChannelCategory> categories = server.getChannelCategories();
+        boolean categoryExists = false;
+        ChannelCategory category = null;
+
+        // check if the ticket category exists
+        for (ChannelCategory channelCategory : categories) {
+            if (Objects.equals(channelCategory.getName(), ticketType)) {
+                categoryExists = true;
+                category = channelCategory;
+                break;
+            }
+        }
+        // if ticket category does not exist, create it
+        if (!categoryExists) {
+            category = createCategory(server, ticketType);
+        }
+        // create the ticket in either the new category or existing one:
+        String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
+        ServerTextChannel newTicket = createChannel(server, ticketName, category);
+        Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName);
+        new ServerTextChannelUpdater(newTicket)
+                .addPermissionOverwrite(server.getEveryoneRole(),
+                        new PermissionsBuilder()
+                                .setAllDenied()
+                                .build())
+                .update();
+        Permissions userPerms = newTicket.getOverwrittenPermissions(interaction.getUser());
+        new ServerTextChannelUpdater(newTicket)
+                .addPermissionOverwrite(interaction.getUser(),
+                        new PermissionsBuilder(userPerms)
+                                .setAllowed(PermissionType.SEND_MESSAGES)
+                                .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
+                                .setAllowed(PermissionType.VIEW_CHANNEL)
+                                .build())
+                .update();
+        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
+            Optional<Role> role = server.getRoleById(roleId);
+            if (role.isPresent()) {
+                Role trueRole = role.get();
+                Permissions rolePerms = newTicket.getOverwrittenPermissions(trueRole);
+                new ServerTextChannelUpdater(newTicket)
+                        .addPermissionOverwrite(trueRole,
+                                new PermissionsBuilder(rolePerms)
+                                        .setAllAllowed()
+                                        .build())
+                        .update();
+                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
+            } else {
+                System.out.println("Role ID Does not exist!!!");
+            }
+        }
+
+        // respond to the client with a link to the ticket:
+        interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
+            interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
+        });
+    }
+    // function for ticket commands
+    public static void runTicketCommand(String message, MessageCreateEvent event) {
+        // add message author role check before switch statement!!!
+        // add make sure this is a ticket check for channel!!!
+        switch(message) {
+            case "ticket close":
+                break;
+            case "ticket delete":
+                break;
+            case "ticket save":
+                break;
+            case "ticket lock":
+                break;
+            case "ticket add":
+                break;
+            case "ticket remove":
+                break;
+        }
+    }
     public static void main(String[] args) {
+        ticketHashTable.put(general_support.name, general_support);
+        ticketHashTable.put(player_report.name, player_report);
+
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
                 .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.G500Kp.KIjJE1tHtx80f6IvqGoVe40k3TqJVxMp0wx9sE")
                 .login()
                 .join();
         Mongo.ConnectToDatabase();
-
         // Print online + admin join link
         System.out.println("-- BOT ONLINE -- ");
         System.out.println("INVITE LINK : " + api.createBotInvite(Permissions.fromBitmask(8)));
-
         // Populate the tickets list based on Ticket objects defined above.
         for(Ticket ticket : tickets) {
             options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description));
         }
-
         // Add event to add the category, channel and message whenever bot is added to a new server.
         api.addServerJoinListener(event -> {
             onJoinNewServer(api, options);
         });
+        //Handle eventualities needed when messages are sent!!!!
         api.addMessageCreateListener(event -> {
             String message = event.getMessage().getContent().toLowerCase();
-            // add message author role check before switch statement!!!
-            // add make sure this is a ticket check for channel!!!
-            switch(message) {
-                case "ticket close":
-                    break;
-                case "ticket delete":
-                    break;
-                case "ticket save":
-                     break;
-                case "ticket lock":
-                    break;
-                case "ticket add":
-                    break;
-                case "ticket remove":
-                    break;
-            }
-        });
+            runTicketCommand(message, event);
 
+        });
         // Handle what happens on click of menu options ( the creation of tickets )
         api.addSelectMenuChooseListener(event -> {
             List<SelectMenuOption> options = event.getSelectMenuInteraction().getChosenOptions();
@@ -152,37 +217,15 @@ public class Main {
             Optional<Server> optionalServer = interaction.getServer();
             if (optionalServer.isPresent()) {
                 Server server = optionalServer.get();
-                List<ChannelCategory> categories = server.getChannelCategories();
-                boolean categoryExists = false;
-                ChannelCategory category = null;
-
-                // check if the ticket category exists
-                for (ChannelCategory channelCategory : categories) {
-                    if (Objects.equals(channelCategory.getName(), ticketType)) {
-                        categoryExists = true;
-                        category = channelCategory;
-                        break;
-                    }
+                try {
+                    createTicket(server, ticketType, interaction);
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-                // if ticket category does not exist, create it
-                if (!categoryExists) {
-                    category = createCategory(server, ticketType);
-                }
-                // create the ticket in either the new category or existing one:
-                String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
-                ServerTextChannel newTicket = createChannel(server, ticketName, category);
-                Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName);
-
-                // respond to the client with a link to the ticket:
-                interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
-                    interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
-                });
-
                 // handle very impossible occurence of the button being pressed in dms:
             } else {
                 System.out.println("interaction did not take place in a server");
             }
-
             ;
         });
     }

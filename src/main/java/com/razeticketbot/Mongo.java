@@ -1,16 +1,11 @@
 package com.razeticketbot;
 
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.lt;
 
 public class Mongo {
     static MongoClient mongoClient;

@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +82,7 @@
       <workItem from="1665756890252" duration="94000" />
       <workItem from="1665756995878" duration="3708000" />
       <workItem from="1665857313866" duration="2792000" />
-      <workItem from="1665944408524" duration="2822000" />
+      <workItem from="1665944408524" duration="8146000" />
     </task>
     <servers />
   </component>
