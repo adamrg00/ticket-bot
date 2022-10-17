@@ -5,6 +5,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +50,14 @@ public class Mongo {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document ticketDoc = serverTicketsCollection.find(eq("channel-id",channelId)).first();
         return (ticketDoc != null);
+    }
+    public static ArrayList<String> getUsersOfAticket(String channelId, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document currentTicket = serverTicketsCollection.find(eq("channel-id", channelId)).first();
+        if(currentTicket != null) {
+            return (ArrayList<String>) currentTicket.get("added-users");
+        }
+        return new ArrayList<String>();
+
     }
 }
