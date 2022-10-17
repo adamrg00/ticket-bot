@@ -171,18 +171,41 @@ public class Main {
             if (Mongo.checkChannelIsTicket(channel.getIdAsString(), server.getIdAsString())){
                 switch(args[1]) {
                     case "close":
+                        // GET LIST OF ALL ADDED USER IDs, remove all permissions except view channel and view message history;
+                        // send nicely formatted closed message with buttons
+                        // LOG THIS ACTION
                         break;
                     case "delete":
+                        // SAVE TICKET MESSAGE HISTORY TO DATABASE
+                        // LOG DELETION OF TICKET IN A CHANNEL
+                        // ACTUALLY DELETE CHANNEL
                         break;
                     case "save":
+                        // NOT SURE IF WILL KEEP THIS FEATURE, BUT IF DO:
+                        // SAVE TICKET MESSAGE HISTORY TO DATABASE
+                        // LOG SAVE OF HISTORY
                         break;
                     case "lock":
+                        // TAKE A THIRD ARGUMENT (ROLE)
+                        // IF ROLE IS GREATER THAN CURRENT SCOPE OF TICKET, REMOVE TICKET PERMS FOR ALL LOWER STAFF ROLES
+                        // LOG THIS ACTION
                         break;
                     case "add":
+                        // TAKE A THIRD...Nth ARGUMENT (USER IDS)
+                        // IF USER ID EXISTS IN SERVER....
+                            // ADD THEM TO TICKET WITH DEFAULT USER PERMISSIONS
+                            // ADD THEIR USER ID TO THE ARRAY STORED IN THE DATABASE
+                        // LOG ACTION
                         break;
                     case "remove":
+                        // ADD TO A SEPARATE ARRAY IN DATABASE MAYBE?
+                        // REMOVE FROM ADDED USERS IN DB
+                        // REMOVE ALL PERMISSIONS
+                        // LOG ACTION
                         break;
                     case "open":
+                        // GET LIST OF CURRENTLY ADDED TICKET USERS
+                        // GIVE THEM BACK THE SEND MESSAGES PERMISSION
                         break;
                 }
             } else {
