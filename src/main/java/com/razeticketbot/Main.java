@@ -7,6 +7,7 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.PermissionsBuilder;
@@ -16,9 +17,9 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.Interaction;
 
+import java.awt.*;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
@@ -149,7 +150,7 @@ public class Main {
                                         .build());
                 // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
             } else {
-                System.out.println("Role ID " + role.toString() + " does not exist!!!");
+                System.out.println("Role ID " + role + " does not exist!!!");
             }
         }
         setPermissions.update();
@@ -161,7 +162,7 @@ public class Main {
         });
     }
     // function for ticket commands
-    public static void closeTicket(DiscordApi api, ArrayList<String> ticketUsers, ServerTextChannel channel) {
+    public static void closeTicket(DiscordApi api, ArrayList<String> ticketUsers, ServerTextChannel channel, User commandAuthor) {
         // GET LIST OF ALL ADDED USER IDs, remove all permissions except view channel and view message history;
         ServerTextChannelUpdater updatePerms = new ServerTextChannelUpdater(channel);
         for(String ticketUser : ticketUsers) {
@@ -172,6 +173,14 @@ public class Main {
                             .build());
         }
         updatePerms.update();
+        EmbedBuilder notification = new EmbedBuilder()
+                //.setTitle("Ticket Action")
+                .setDescription("Has Closed the Ticket")
+                .setAuthor(commandAuthor)
+                .setColor(Color.CYAN)
+                .setThumbnail("https://st3.depositphotos.com/8089676/33517/v/1600/depositphotos_335171522-stock-illustration-closed-icon-illustration-vector-sign.jpg");
+
+        channel.sendMessage(notification);
         // send nicely formatted closed message with buttons
         // LOG THIS ACTION
     }
@@ -190,7 +199,7 @@ public class Main {
                     case "close":
                         ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channelId, serverId);
                         if(ticketUsers.size() == 0) {return;}
-                        closeTicket(api, ticketUsers, channel);
+                        closeTicket(api, ticketUsers, channel, event.getMessageAuthor().asUser().get());
                         break;
                     case "delete":
                         // SAVE TICKET MESSAGE HISTORY TO DATABASE
