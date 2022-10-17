@@ -5,6 +5,9 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.mongodb.client.model.Filters.eq;
 
 public class Mongo {
@@ -30,13 +33,21 @@ public class Mongo {
         int amountOfZeros = 5 - amountOfTicketsString.length();
         return ticketType.replaceAll(" ", "-").toLowerCase() + "-" + "0".repeat(amountOfZeros) + amountOfTicketsString;
     }
-    public static void createTicket(String ticketType, ServerTextChannel channel, String serverId, String ticketName) {
-    MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
-    Document ticket = new Document("_id", new ObjectId());
-    ticket.append("ticket-type", ticketType);
-    ticket.append("ticket-name", ticketName);
-    ticket.append("channel-id", channel.getIdAsString());
-    ticket.append("transcript", null);
-    serverTicketsCollection.insertOne(ticket);
+    public static void createTicket(String ticketType, ServerTextChannel channel, String serverId, String ticketName, String creatorUserId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);;
+        Document ticket = new Document("_id", new ObjectId());
+        List addedUsersList = new ArrayList<>();
+        addedUsersList.add(creatorUserId);
+        ticket.append("ticket-type", ticketType);
+        ticket.append("ticket-name", ticketName);
+        ticket.append("channel-id", channel.getIdAsString());
+        ticket.append("added-users", addedUsersList);
+        ticket.append("transcript", null);
+        serverTicketsCollection.insertOne(ticket);
+    }
+    public static boolean checkChannelIsTicket(String channelId, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document ticketDoc = serverTicketsCollection.find(eq("channel-id",channelId)).first();
+        return (ticketDoc != null);
     }
 }

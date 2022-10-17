@@ -22,8 +22,14 @@ import java.util.concurrent.ExecutionException;
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
-    final static Ticket general_support = new Ticket("General Support", "general_support", "Click here to choose general support ticket", new String[]{"1031292038265704600"});
-    final static Ticket player_report =  new Ticket("Player Report", "player_report", "Click here to choose player report ticket", new String[]{"1031292038265704600"});
+    final static Ticket general_support = new Ticket("General Support",
+            "general_support",
+            "Click here to choose general support ticket",
+            new String[]{"1031292038265704600"});
+    final static Ticket player_report =  new Ticket("Player Report",
+            "player_report",
+            "Click here to choose player report ticket",
+            new String[]{"1031292038265704600"});
     static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
 
     // Create data structure of tickets for dropdown
@@ -119,7 +125,7 @@ public class Main {
         // create the ticket in either the new category or existing one:
         String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
         ServerTextChannel newTicket = createChannel(server, ticketName, category);
-        Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName);
+        Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName, interaction.getUser().getIdAsString());
         ServerTextChannelUpdater setPermissions = new ServerTextChannelUpdater(newTicket);
         setPermissions.addPermissionOverwrite(server.getEveryoneRole(),
                         new PermissionsBuilder()
@@ -155,22 +161,38 @@ public class Main {
     }
     // function for ticket commands
     public static void runTicketCommand(String message, MessageCreateEvent event) {
+        String[] args = message.split(" ");
+        if (!args[0].equals("ticket")) {return;}
+        Optional<ServerTextChannel> optChannel = event.getServerTextChannel();
+        Optional<Server> optServer = event.getServer();
+        if(optChannel.isPresent() & optServer.isPresent()) {
+            ServerTextChannel channel = optChannel.get();
+            Server server = optServer.get();
+            if (Mongo.checkChannelIsTicket(channel.getIdAsString(), server.getIdAsString())){
+                switch(args[1]) {
+                    case "close":
+                        break;
+                    case "delete":
+                        break;
+                    case "save":
+                        break;
+                    case "lock":
+                        break;
+                    case "add":
+                        break;
+                    case "remove":
+                        break;
+                    case "open":
+                        break;
+                }
+            } else {
+                channel.sendMessage("Channel is not a ticket!!!");
+            }
+
+        }
         // add message author role check before switch statement!!!
         // add make sure this is a ticket check for channel!!!
-        switch(message) {
-            case "ticket close":
-                break;
-            case "ticket delete":
-                break;
-            case "ticket save":
-                break;
-            case "ticket lock":
-                break;
-            case "ticket add":
-                break;
-            case "ticket remove":
-                break;
-        }
+
     }
     public static void main(String[] args) {
         ticketHashTable.put(general_support.name, general_support);
