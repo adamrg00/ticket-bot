@@ -55,9 +55,13 @@ public class Mongo {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document currentTicket = serverTicketsCollection.find(eq("channel-id", channelId)).first();
         if(currentTicket != null) {
-            return (ArrayList<String>) currentTicket.get("added-users");
+            try {
+                return (ArrayList<String>) currentTicket.get("added-users");
+            }catch (ClassCastException exception) {
+                return new ArrayList<String>();
+            }
+        } else {
+            return new ArrayList<String>();
         }
-        return new ArrayList<String>();
-
     }
 }

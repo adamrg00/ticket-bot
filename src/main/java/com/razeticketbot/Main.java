@@ -12,6 +12,7 @@ import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.Interaction;
 
@@ -160,7 +161,21 @@ public class Main {
         });
     }
     // function for ticket commands
-    public static void runTicketCommand(String message, MessageCreateEvent event) {
+    public static void closeTicket(DiscordApi api, ArrayList<String> ticketUsers, ServerTextChannel channel) {
+        // GET LIST OF ALL ADDED USER IDs, remove all permissions except view channel and view message history;
+        ServerTextChannelUpdater updatePerms = new ServerTextChannelUpdater(channel);
+        for(String ticketUser : ticketUsers) {
+            User user = api.getUserById(ticketUser).join();
+            updatePerms.addPermissionOverwrite(user,
+                    new PermissionsBuilder(channel.getOverwrittenPermissions(user))
+                            .setDenied(PermissionType.SEND_MESSAGES)
+                            .build());
+        }
+        updatePerms.update();
+        // send nicely formatted closed message with buttons
+        // LOG THIS ACTION
+    }
+    public static void runTicketCommand(String message, MessageCreateEvent event, DiscordApi api) {
         String[] args = message.split(" ");
         if (!args[0].equals("ticket")) {return;}
         Optional<ServerTextChannel> optChannel = event.getServerTextChannel();
@@ -168,12 +183,14 @@ public class Main {
         if(optChannel.isPresent() & optServer.isPresent()) {
             ServerTextChannel channel = optChannel.get();
             Server server = optServer.get();
-            if (Mongo.checkChannelIsTicket(channel.getIdAsString(), server.getIdAsString())){
+            String channelId = channel.getIdAsString();
+            String serverId = server.getIdAsString();
+            if (Mongo.checkChannelIsTicket(channelId, serverId)){
                 switch(args[1]) {
                     case "close":
-                        // GET LIST OF ALL ADDED USER IDs, remove all permissions except view channel and view message history;
-                        // send nicely formatted closed message with buttons
-                        // LOG THIS ACTION
+                        ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channelId, serverId);
+                        if(ticketUsers.size() == 0) {return;}
+                        closeTicket(api, ticketUsers, channel);
                         break;
                     case "delete":
                         // SAVE TICKET MESSAGE HISTORY TO DATABASE
@@ -241,7 +258,7 @@ public class Main {
         //Handle eventualities needed when messages are sent!!!!
         api.addMessageCreateListener(event -> {
             String message = event.getMessage().getContent().toLowerCase();
-            runTicketCommand(message, event);
+            runTicketCommand(message, event, api);
 
         });
         // Handle what happens on click of menu options ( the creation of tickets )
