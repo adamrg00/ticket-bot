@@ -12,4 +12,5 @@ public class Ticket {
         description = desc;
         rolesThatCanSeeTicketsDefault = rolesToSeeTicket;
     }
+
 }

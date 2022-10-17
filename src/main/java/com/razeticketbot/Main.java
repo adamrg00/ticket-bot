@@ -99,7 +99,7 @@ public class Main {
         }
     }
     //function that creates a ticket and stores info in db
-    public static void createTicket(Server server, String ticketType, Interaction interaction) throws ExecutionException, InterruptedException {
+    public static void createTicket(Server server, String ticketType, Interaction interaction) {
         List<ChannelCategory> categories = server.getChannelCategories();
         boolean categoryExists = false;
         ChannelCategory category = null;
@@ -120,34 +120,33 @@ public class Main {
         String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
         ServerTextChannel newTicket = createChannel(server, ticketName, category);
         Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName);
-        new ServerTextChannelUpdater(newTicket)
-                .addPermissionOverwrite(server.getEveryoneRole(),
+        ServerTextChannelUpdater setPermissions = new ServerTextChannelUpdater(newTicket);
+        setPermissions.addPermissionOverwrite(server.getEveryoneRole(),
                         new PermissionsBuilder()
                                 .setAllDenied()
-                                .build())
-                .addPermissionOverwrite(interaction.getUser(),
+                                .build());
+        setPermissions.addPermissionOverwrite(interaction.getUser(),
                         new PermissionsBuilder()
                                 .setAllowed(PermissionType.SEND_MESSAGES)
                                 .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
                                 .setAllowed(PermissionType.VIEW_CHANNEL)
-                                .build())
-                .update();
-//        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
-//            Optional<Role> role = server.getRoleById(roleId);
-//            if (role.isPresent()) {
-//                Role trueRole = role.get();
-//                Permissions rolePerms = newTicket.getOverwrittenPermissions(trueRole);
-//                new ServerTextChannelUpdater(newTicket)
-//                        .addPermissionOverwrite(trueRole,
-//                                new PermissionsBuilder(rolePerms)
-//                                        .setAllAllowed()
-//                                        .build())
-//                        .update();
-//                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
-//            } else {
-//                System.out.println("Role ID Does not exist!!!");
-//            }
-//        }
+                                .build());
+        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
+            Optional<Role> role = server.getRoleById(roleId);
+            if (role.isPresent()) {
+                Role trueRole = role.get();
+                Permissions rolePerms = newTicket.getOverwrittenPermissions(trueRole);
+                setPermissions.addPermissionOverwrite(trueRole,
+                                new PermissionsBuilder(rolePerms)
+                                        .setAllAllowed()
+                                        .build());
+                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
+            } else {
+                System.out.println("Role ID " + role.toString() + " does not exist!!!");
+            }
+        }
+        setPermissions.update();
+
 
         // respond to the client with a link to the ticket:
         interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
@@ -214,11 +213,7 @@ public class Main {
             Optional<Server> optionalServer = interaction.getServer();
             if (optionalServer.isPresent()) {
                 Server server = optionalServer.get();
-                try {
-                    createTicket(server, ticketType, interaction);
-                } catch (ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                createTicket(server, ticketType, interaction);
                 // handle very impossible occurence of the button being pressed in dms:
             } else {
                 System.out.println("interaction did not take place in a server");
