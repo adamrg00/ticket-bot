@@ -16,6 +16,7 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
 import java.awt.*;
 import java.util.*;
@@ -83,6 +84,16 @@ public class Main {
                 System.out.println("interaction did not take place in a server");
             }
             ;
+        });
+        api.addButtonClickListener(event -> {
+            ButtonInteraction buttonInteraction = event.getButtonInteraction();
+            String buttonEvent = buttonInteraction.getCustomId();
+            switch (buttonEvent) {
+                case "open-ticket":
+                    break;
+                case "delete-ticket":
+                    break;
+            }
         });
     }
 }

@@ -101,8 +101,8 @@ public class TicketActions {
                 .addEmbed(notification)
                 .addComponents(
                         ActionRow.of(
-                                org.javacord.api.entity.message.component.Button.success("Open", "Unlock Ticket"),
-                                Button.danger("Delete", "Delete Ticket")
+                                org.javacord.api.entity.message.component.Button.success("open-ticket", "Unlock Ticket"),
+                                Button.danger("delete-ticket", "Delete Ticket")
                         )
                 )
                 .send(channel);
