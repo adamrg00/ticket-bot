@@ -1,5 +1,4 @@
 package com.razeticketbot;
-
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.*;
@@ -21,7 +20,6 @@ import org.javacord.api.interaction.Interaction;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
@@ -34,7 +32,6 @@ public class Main {
             "Click here to choose player report ticket",
             new String[]{"1031292038265704600"});
     static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
-
     // Create data structure of tickets for dropdown
     final static Ticket[] tickets ={general_support, player_report};
     // Initialise the List of menu options
@@ -44,7 +41,6 @@ public class Main {
     public static void main(String[] args) {
         ticketHashTable.put(general_support.name, general_support);
         ticketHashTable.put(player_report.name, player_report);
-
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
                 .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.G500Kp.KIjJE1tHtx80f6IvqGoVe40k3TqJVxMp0wx9sE")
@@ -66,7 +62,6 @@ public class Main {
         api.addMessageCreateListener(event -> {
             String message = event.getMessage().getContent().toLowerCase();
            BotActions.runTicketCommand(message, event, api);
-
         });
         // Handle what happens on click of menu options ( the creation of tickets )
         api.addSelectMenuChooseListener(event -> {
