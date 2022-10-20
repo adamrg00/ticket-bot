@@ -88,11 +88,16 @@ public class Main {
         api.addButtonClickListener(event -> {
             ButtonInteraction buttonInteraction = event.getButtonInteraction();
             String buttonEvent = buttonInteraction.getCustomId();
-            switch (buttonEvent) {
-                case "open-ticket":
-                    break;
-                case "delete-ticket":
-                    break;
+            Optional<TextChannel> optChannel = buttonInteraction.getChannel();
+            if (optChannel.isPresent()) {
+                ServerTextChannel channel = (ServerTextChannel) optChannel.get();
+
+                switch (buttonEvent) {
+                    case "open-ticket":
+                        break;
+                    case "delete-ticket":
+                        TicketActions.delete(api, channel, channel.getServer(), buttonInteraction.getUser());
+                }
             }
         });
     }

@@ -126,7 +126,7 @@ public class TicketActions {
             Iterator<Message> messageIterator = messages.stream().iterator();
             ArrayList<Document> messageSetArrayList = new ArrayList<>();
             while (messageIterator.hasNext()) {
-                Message currentMessage = (Message) messageIterator.next();
+                Message currentMessage = messageIterator.next();
                 String messageContent = currentMessage.getContent();
                 String messageAuthor = currentMessage.getAuthor().getIdAsString();
                 Instant timestamp = currentMessage.getCreationTimestamp();
