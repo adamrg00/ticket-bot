@@ -4,7 +4,9 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -17,10 +19,9 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.Interaction;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static com.razeticketbot.Main.ticketHashTable;
 
@@ -79,7 +80,9 @@ public class TicketActions {
             interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
         });
     }
-    public static void close(DiscordApi api, ArrayList<String> ticketUsers, ServerTextChannel channel, User commandAuthor) {
+    public static void close(DiscordApi api, ServerTextChannel channel, User commandAuthor, Server server) {
+        ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channel.getIdAsString(), server.getIdAsString());
+        if(ticketUsers.size() == 0) {return;}
         // GET LIST OF ALL ADDED USER IDs, remove all permissions except view channel and view message history;
         ServerTextChannelUpdater updatePerms = new ServerTextChannelUpdater(channel);
         for(String ticketUser : ticketUsers) {
@@ -107,5 +110,35 @@ public class TicketActions {
                 )
                 .send(channel);
         // LOG THIS ACTION
+    }
+    public static void delete(DiscordApi api, ServerTextChannel channel, Server server, User commandAuthor) {
+        EmbedBuilder notification = new EmbedBuilder()
+                .setDescription("Has Marked the ticket for deletion")
+                .addField("", "ticket will be deleted momentarily")
+                .setAuthor(commandAuthor)
+                .setColor(Color.CYAN);
+        new MessageBuilder().addEmbed(notification).send(channel);
+        CompletableFuture<MessageSet> tempMessageSet = channel.getMessages(9999999);
+        tempMessageSet.thenAccept(messages -> {
+            // SAVE TICKET MESSAGE HISTORY TO DATABASE
+            Iterator<Message> messageIterator = messages.stream().iterator();
+            ArrayList<Map<String, String>> messageSetArrayList = new ArrayList<>();
+            while (messageIterator.hasNext()) {
+                Message currentMessage = (Message) messageIterator.next();
+                String messageContent = currentMessage.getContent();
+                String messageAuthor = currentMessage.getAuthor().getIdAsString();
+                if (!messageContent.equals("")) {
+                    Map<String, String> messageMap = new HashMap<>();
+                    messageMap.put(messageAuthor, messageContent);
+                    messageSetArrayList.add(messageMap);
+                }
+            }
+            String channelId = channel.getIdAsString();
+            String serverId = server.getIdAsString();
+            Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
+            // LOG DELETION OF TICKET IN A CHANNEL
+            // ACTUALLY DELETE CHANNEL
+            channel.delete();
+        });
     }
 }

@@ -2,7 +2,9 @@ package com.razeticketbot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
@@ -12,6 +14,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static com.razeticketbot.Main.MAKE_A_TICKET_CATEGORY;
 import static com.razeticketbot.Main.MAKE_A_TICKET_CHANNEL;
@@ -46,18 +49,19 @@ public class BotActions {
             if (Mongo.checkChannelIsTicket(channelId, serverId)){
                 switch(args[1]) {
                     case "close":
-                        ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channelId, serverId);
-                        if(ticketUsers.size() == 0) {return;}
                         try {
-                            TicketActions.close(api, ticketUsers, channel, event.getMessageAuthor().asUser().get());
+                            TicketActions.close(api, channel, event.getMessageAuthor().asUser().get(), server);
                         } catch (NoSuchElementException error) {
                             channel.sendMessage("Author of message unknown error");
                         }
                         break;
                     case "delete":
-                        // SAVE TICKET MESSAGE HISTORY TO DATABASE
-                        // LOG DELETION OF TICKET IN A CHANNEL
-                        // ACTUALLY DELETE CHANNEL
+                        try {
+                            TicketActions.delete(api, channel, server, event.getMessageAuthor().asUser().get());
+                        } catch (NoSuchElementException error) {
+                            channel.sendMessage("Author of message unknown error");
+                        };
+
                         break;
                     case "save":
                         // NOT SURE IF WILL KEEP THIS FEATURE, BUT IF DO:

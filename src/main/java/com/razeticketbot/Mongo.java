@@ -1,13 +1,20 @@
 package com.razeticketbot;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.*;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -43,7 +50,6 @@ public class Mongo {
         ticket.append("ticket-name", ticketName);
         ticket.append("channel-id", channel.getIdAsString());
         ticket.append("added-users", addedUsersList);
-        ticket.append("transcript", null);
         serverTicketsCollection.insertOne(ticket);
     }
     public static boolean checkChannelIsTicket(String channelId, String serverId) {
@@ -62,6 +68,17 @@ public class Mongo {
             }
         } else {
             return new ArrayList<String>();
+        }
+    }
+    public static void saveTranscriptOfTicket(ArrayList<Map<String, String>> arrayListOfMessages, String channelId, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document query = new Document().append("channel-id", channelId);
+        Bson updates = Updates.addToSet("transcript", arrayListOfMessages);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        try {
+            UpdateResult result = serverTicketsCollection.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            System.err.println(me);
         }
     }
 }
