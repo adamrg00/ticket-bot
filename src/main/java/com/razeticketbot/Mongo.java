@@ -10,11 +10,8 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -70,7 +67,7 @@ public class Mongo {
             return new ArrayList<String>();
         }
     }
-    public static void saveTranscriptOfTicket(ArrayList<Map<String, String>> arrayListOfMessages, String channelId, String serverId) {
+    public static void saveTranscriptOfTicket(ArrayList<Document> arrayListOfMessages, String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document query = new Document().append("channel-id", channelId);
         Bson updates = Updates.addToSet("transcript", arrayListOfMessages);
@@ -78,7 +75,7 @@ public class Mongo {
         try {
             UpdateResult result = serverTicketsCollection.updateOne(query, updates, options);
         } catch (MongoException me) {
-            System.err.println(me);
+            System.out.println(me);
         }
     }
 }

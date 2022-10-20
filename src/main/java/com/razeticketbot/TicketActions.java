@@ -1,5 +1,6 @@
 package com.razeticketbot;
 
+import org.bson.Document;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -19,6 +20,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.Interaction;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -122,15 +124,17 @@ public class TicketActions {
         tempMessageSet.thenAccept(messages -> {
             // SAVE TICKET MESSAGE HISTORY TO DATABASE
             Iterator<Message> messageIterator = messages.stream().iterator();
-            ArrayList<Map<String, String>> messageSetArrayList = new ArrayList<>();
+            ArrayList<Document> messageSetArrayList = new ArrayList<>();
             while (messageIterator.hasNext()) {
                 Message currentMessage = (Message) messageIterator.next();
                 String messageContent = currentMessage.getContent();
                 String messageAuthor = currentMessage.getAuthor().getIdAsString();
+                Instant timestamp = currentMessage.getCreationTimestamp();
                 if (!messageContent.equals("")) {
-                    Map<String, String> messageMap = new HashMap<>();
-                    messageMap.put(messageAuthor, messageContent);
-                    messageSetArrayList.add(messageMap);
+                    Document doc = new Document().append("author", messageAuthor)
+                                    .append("content", messageContent)
+                                            .append("timestamp", timestamp);
+                    messageSetArrayList.add(doc);
                 }
             }
             String channelId = channel.getIdAsString();

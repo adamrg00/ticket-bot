@@ -90,6 +90,8 @@ public class BotActions {
                         // GET LIST OF CURRENTLY ADDED TICKET USERS
                         // GIVE THEM BACK THE SEND MESSAGES PERMISSION
                         break;
+                    default:
+                        break;
                 }
             } else {
                 channel.sendMessage("Channel is not a ticket!!!");
