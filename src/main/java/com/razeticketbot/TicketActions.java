@@ -82,6 +82,34 @@ public class TicketActions {
             interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
         });
     }
+    public static void open(DiscordApi api, ServerTextChannel channel, User commandAuthor, Server server) {
+        ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channel.getIdAsString(), server.getIdAsString());
+        if (ticketUsers.size() == 0) {return;}
+        ServerTextChannelUpdater updatePerms = new ServerTextChannelUpdater(channel);
+        for (String ticketUser : ticketUsers) {
+            User user = api.getUserById(ticketUser).join();
+            updatePerms.addPermissionOverwrite(user,
+                    new PermissionsBuilder(channel.getOverwrittenPermissions(user))
+                            .setAllowed(PermissionType.SEND_MESSAGES)
+                            .build());
+        }
+        updatePerms.update();
+        EmbedBuilder notification = new EmbedBuilder()
+                //.setTitle("Ticket Action")
+                .setDescription("Has Opened the Ticket")
+                .setAuthor(commandAuthor)
+                .setColor(Color.GREEN);
+                //.setThumbnail("https://st3.depositphotos.com/8089676/33517/v/1600/depositphotos_335171522-stock-illustration-closed-icon-illustration-vector-sign.jpg");
+        new MessageBuilder()
+                .addEmbed(notification)
+                .addComponents(
+                        ActionRow.of(
+                                org.javacord.api.entity.message.component.Button.success("close-ticket", "Close Ticket"),
+                                Button.danger("delete-ticket", "Delete Ticket")
+                        )
+                )
+                .send(channel);
+    }
     public static void close(DiscordApi api, ServerTextChannel channel, User commandAuthor, Server server) {
         ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channel.getIdAsString(), server.getIdAsString());
         if(ticketUsers.size() == 0) {return;}
@@ -144,5 +172,47 @@ public class TicketActions {
             // ACTUALLY DELETE CHANNEL
             channel.delete();
         });
+    }
+    public static void removeUserFromTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
+        Collection<PermissionType> userPermissions = channel.getOverwrittenPermissions(user).getAllowedPermission();
+        if (userPermissions.contains(PermissionType.VIEW_CHANNEL)) {
+            new ServerTextChannelUpdater(channel)
+                    .addPermissionOverwrite(
+                            user,
+                            new PermissionsBuilder()
+                                    .setAllDenied()
+                                    .build()
+                    )
+                    .update();
+            EmbedBuilder notification = new EmbedBuilder()
+                    .setDescription("Has removed " + user.getName() + " from the ticket")
+                    .setAuthor(commandAuthor)
+                    .setColor(Color.ORANGE);
+            new MessageBuilder().addEmbed(notification).send(channel);
+        } else {
+            channel.sendMessage(user.getName() + " is not in the ticket!");
+        }
+    }
+    public static void addUserToTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
+        Collection<PermissionType> userPermissions = channel.getOverwrittenPermissions(user).getAllowedPermission();
+        if ( ! userPermissions.contains(PermissionType.VIEW_CHANNEL)) {
+            new ServerTextChannelUpdater(channel)
+                    .addPermissionOverwrite(
+                            user,
+                            new PermissionsBuilder()
+                                    .setAllowed(PermissionType.SEND_MESSAGES)
+                                    .setAllowed(PermissionType.VIEW_CHANNEL)
+                                    .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
+                                    .build()
+                    )
+                    .update();
+            EmbedBuilder notification = new EmbedBuilder()
+                    .setDescription("Has added " + user.getName() + " to the ticket")
+                    .setAuthor(commandAuthor)
+                    .setColor(Color.magenta);
+            new MessageBuilder().addEmbed(notification).send(channel);
+        } else {
+            channel.sendMessage(user.getName() + " is already in the ticket!");
+        }
     }
 }

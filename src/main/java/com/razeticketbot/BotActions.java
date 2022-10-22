@@ -15,6 +15,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.razeticketbot.Main.MAKE_A_TICKET_CATEGORY;
 import static com.razeticketbot.Main.MAKE_A_TICKET_CHANNEL;
@@ -38,6 +39,7 @@ public class BotActions {
     }
     public static void runTicketCommand(String message, MessageCreateEvent event, DiscordApi api) {
         String[] args = message.split(" ");
+        if(args.length < 2) {return;}
         if (!args[0].equals("ticket")) {return;}
         Optional<ServerTextChannel> optChannel = event.getServerTextChannel();
         Optional<Server> optServer = event.getServer();
@@ -74,6 +76,17 @@ public class BotActions {
                         // LOG THIS ACTION
                         break;
                     case "add":
+                        if(args.length < 3) {return;}
+                        for(int i = 0; i < args.length - 2; i++) {
+                            String user = args[i + 2].replaceAll("[^0-9]", "");
+                            api.getUserById(user).thenAccept(trueUser -> {
+                                try {
+                                    TicketActions.addUserToTicket(trueUser, channel, server, event.getMessageAuthor().asUser().get());
+                                } catch (NoSuchElementException nsee) {
+                                    channel.sendMessage("User ID :" + user + "Not Found");
+                                }
+                            });
+                        }
                         // TAKE A THIRD...Nth ARGUMENT (USER IDS)
                         // IF USER ID EXISTS IN SERVER....
                         // ADD THEM TO TICKET WITH DEFAULT USER PERMISSIONS
@@ -81,14 +94,28 @@ public class BotActions {
                         // LOG ACTION
                         break;
                     case "remove":
+                        if(args.length < 3) {return;}
+                        for(int i = 0; i < args.length - 2; i++) {
+                            String user = args[i + 2].replaceAll("[^0-9]", "");
+                            api.getUserById(user).thenAccept(trueUser -> {
+                                try {
+                                    TicketActions.removeUserFromTicket(trueUser, channel, server, event.getMessageAuthor().asUser().get());
+                                } catch (NoSuchElementException nsee) {
+                                    channel.sendMessage("User ID :" + user + "Not Found");
+                                }
+                            });
+                        }
                         // ADD TO A SEPARATE ARRAY IN DATABASE MAYBE?
                         // REMOVE FROM ADDED USERS IN DB
                         // REMOVE ALL PERMISSIONS
                         // LOG ACTION
                         break;
                     case "open":
-                        // GET LIST OF CURRENTLY ADDED TICKET USERS
-                        // GIVE THEM BACK THE SEND MESSAGES PERMISSION
+                        try {
+                            TicketActions.open(api, channel, event.getMessageAuthor().asUser().get(), server);
+                        } catch (NoSuchElementException error) {
+                            channel.sendMessage("Author of message unknown error");
+                        }
                         break;
                     default:
                         break;

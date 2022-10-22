@@ -67,6 +67,9 @@ public class Mongo {
             return new ArrayList<String>();
         }
     }
+    public static void addUserToTicket(String channelId, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId)
+    }
     public static void saveTranscriptOfTicket(ArrayList<Document> arrayListOfMessages, String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document query = new Document().append("channel-id", channelId);
