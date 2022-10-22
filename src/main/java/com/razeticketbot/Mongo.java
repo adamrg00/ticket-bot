@@ -67,18 +67,38 @@ public class Mongo {
             return new ArrayList<String>();
         }
     }
-    public static void addUserToTicket(String channelId, String serverId) {
-        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId)
+    public static void addUserToTicket(String channelId, String serverId, String userId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document query = new Document().append("channel-id", channelId);
+        Bson updates = Updates.addToSet("added-users", userId);
+        try {
+            UpdateResult result = serverTicketsCollection.updateOne(query, updates);
+        } catch (MongoException me) {
+            System.err.println(me);
+        }
+    }
+
+    public static void removeUserFromTicket(String channelId, String serverId, String userId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document currentTicket = serverTicketsCollection.find(eq("channel-id", channelId)).first();
+        ArrayList<String> currentAddedUsers = (ArrayList<String>) currentTicket.get("added-users");
+        currentAddedUsers.removeIf(user -> user.equals(userId));
+        Document query = new Document().append("channel-id", channelId);
+        Bson updates = Updates.set("added-users", currentAddedUsers);
+        try {
+            UpdateResult result = serverTicketsCollection.updateOne(query, updates);
+        } catch (MongoException me) {
+            System.err.println(me);
+        }
     }
     public static void saveTranscriptOfTicket(ArrayList<Document> arrayListOfMessages, String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document query = new Document().append("channel-id", channelId);
-        Bson updates = Updates.addToSet("transcript", arrayListOfMessages);
-        UpdateOptions options = new UpdateOptions().upsert(true);
+        Bson updates = Updates.set("transcript", arrayListOfMessages);
         try {
-            UpdateResult result = serverTicketsCollection.updateOne(query, updates, options);
+            UpdateResult result = serverTicketsCollection.updateOne(query, updates);
         } catch (MongoException me) {
-            System.out.println(me);
+            System.err.println(me);
         }
     }
 }

@@ -184,6 +184,7 @@ public class TicketActions {
                                     .build()
                     )
                     .update();
+            Mongo.removeUserFromTicket(channel.getIdAsString(), server.getIdAsString(), user.getIdAsString());
             EmbedBuilder notification = new EmbedBuilder()
                     .setDescription("Has removed " + user.getName() + " from the ticket")
                     .setAuthor(commandAuthor)
@@ -206,6 +207,7 @@ public class TicketActions {
                                     .build()
                     )
                     .update();
+            Mongo.addUserToTicket(channel.getIdAsString(), server.getIdAsString(), user.getIdAsString());
             EmbedBuilder notification = new EmbedBuilder()
                     .setDescription("Has added " + user.getName() + " to the ticket")
                     .setAuthor(commandAuthor)
