@@ -38,6 +38,8 @@ public class BotActions {
                 .update();
     }
     public static void runTicketCommand(String message, MessageCreateEvent event, DiscordApi api) {
+        // add message author role check before switch statement!!!
+        // add make sure this is a ticket check for channel!!!
         String[] args = message.split(" ");
         if(args.length < 2) {return;}
         if (!args[0].equals("ticket")) {return;}
@@ -87,10 +89,6 @@ public class BotActions {
                                 }
                             });
                         }
-                        // TAKE A THIRD...Nth ARGUMENT (USER IDS)
-                        // IF USER ID EXISTS IN SERVER....
-                        // ADD THEM TO TICKET WITH DEFAULT USER PERMISSIONS
-                        // ADD THEIR USER ID TO THE ARRAY STORED IN THE DATABASE
                         // LOG ACTION
                         break;
                     case "remove":
@@ -105,10 +103,6 @@ public class BotActions {
                                 }
                             });
                         }
-                        // ADD TO A SEPARATE ARRAY IN DATABASE MAYBE?
-                        // REMOVE FROM ADDED USERS IN DB
-                        // REMOVE ALL PERMISSIONS
-                        // LOG ACTION
                         break;
                     case "open":
                         try {
@@ -125,8 +119,7 @@ public class BotActions {
             }
 
         }
-        // add message author role check before switch statement!!!
-        // add make sure this is a ticket check for channel!!!
+
 
     }
     public static void onJoinNewServer(DiscordApi api, List<SelectMenuOption> options) {

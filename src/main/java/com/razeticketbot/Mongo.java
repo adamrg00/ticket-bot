@@ -77,7 +77,6 @@ public class Mongo {
             System.err.println(me);
         }
     }
-
     public static void removeUserFromTicket(String channelId, String serverId, String userId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document currentTicket = serverTicketsCollection.find(eq("channel-id", channelId)).first();

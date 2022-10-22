@@ -1,26 +1,19 @@
 package com.razeticketbot;
+
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.channel.*;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.component.ActionRow;
-import org.javacord.api.entity.message.component.SelectMenu;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.component.SelectMenuOption;
-import org.javacord.api.entity.message.component.Button;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
-import org.javacord.api.entity.permission.PermissionsBuilder;
-import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
-import java.awt.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Optional;
 public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
@@ -32,13 +25,10 @@ public class Main {
             "player_report",
             "Click here to choose player report ticket",
             new String[]{"1031292038265704600"});
-    static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
-    // Create data structure of tickets for dropdown
     final static Ticket[] tickets ={general_support, player_report};
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
-    // function to run whenever the bot joins a new server:
-    // function for ticket commands
+    static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
     public static void main(String[] args) {
         ticketHashTable.put(general_support.name, general_support);
         ticketHashTable.put(player_report.name, player_report);
