@@ -112,11 +112,9 @@ public class TicketActions {
         }
         updatePerms.update();
         EmbedBuilder notification = new EmbedBuilder()
-                //.setTitle("Ticket Action")
                 .setDescription("Has Opened the Ticket")
                 .setAuthor(commandAuthor)
                 .setColor(Color.GREEN);
-                //.setThumbnail("https://st3.depositphotos.com/8089676/33517/v/1600/depositphotos_335171522-stock-illustration-closed-icon-illustration-vector-sign.jpg");
         new MessageBuilder()
                 .addEmbed(notification)
                 .addComponents(
@@ -142,11 +140,9 @@ public class TicketActions {
         updatePerms.update();
         // send nicely formatted closed message with buttons
         EmbedBuilder notification = new EmbedBuilder()
-                //.setTitle("Ticket Action")
                 .setDescription("Has Closed the Ticket")
                 .setAuthor(commandAuthor)
-                .setColor(Color.CYAN)
-                .setThumbnail("https://st3.depositphotos.com/8089676/33517/v/1600/depositphotos_335171522-stock-illustration-closed-icon-illustration-vector-sign.jpg");
+                .setColor(Color.CYAN);
         new MessageBuilder()
                 .addEmbed(notification)
                 .addComponents(
