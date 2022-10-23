@@ -10,15 +10,16 @@ import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.PermissionsBuilder;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.razeticketbot.Main.MAKE_A_TICKET_CATEGORY;
-import static com.razeticketbot.Main.MAKE_A_TICKET_CHANNEL;
+import static com.razeticketbot.Main.*;
 
 public class BotActions {
     public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel, Server server) {
@@ -157,4 +158,15 @@ public class BotActions {
 
         }
     }
+    public static boolean isUserTicketAdmin(User user, Server server, String ticketType) {
+        Ticket typeOfTicket = ticketHashTable.get(ticketType);
+        String[] adminRolesOfTicket = typeOfTicket.rolesThatCanSeeTicketsDefault;
+        List<Role> rolesThatUserHas = user.getRoles(server);
+        for(Role userRole : rolesThatUserHas) {
+            if(Arrays.stream(adminRolesOfTicket).anyMatch(userRole.getIdAsString()::equals)) {
+                return true;
+            }
+        }
+        return false;
+    };
 }

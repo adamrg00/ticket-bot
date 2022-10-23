@@ -47,8 +47,15 @@ public class Mongo {
         ticket.append("ticket-name", ticketName);
         ticket.append("channel-id", channel.getIdAsString());
         ticket.append("added-users", addedUsersList);
+        ticket.append("ticket-creator", creatorUserId);
+        ticket.append("deleted", false);
         serverTicketsCollection.insertOne(ticket);
     }
+    public static int getAmountOfTicketsOpenByUser(String serverId, String userId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        Document query = new Document().append("ticket-creator", userId).append("deleted", false);
+        return (int) serverTicketsCollection.countDocuments(query);
+    };
     public static boolean checkChannelIsTicket(String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document ticketDoc = serverTicketsCollection.find(eq("channel-id",channelId)).first();
@@ -93,7 +100,7 @@ public class Mongo {
     public static void saveTranscriptOfTicket(ArrayList<Document> arrayListOfMessages, String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document query = new Document().append("channel-id", channelId);
-        Bson updates = Updates.set("transcript", arrayListOfMessages);
+        Bson updates = Updates.combine(Updates.set("transcript", arrayListOfMessages),  Updates.set("deleted", true));
         try {
             UpdateResult result = serverTicketsCollection.updateOne(query, updates);
         } catch (MongoException me) {

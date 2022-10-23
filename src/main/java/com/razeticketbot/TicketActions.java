@@ -29,6 +29,14 @@ import static com.razeticketbot.Main.ticketHashTable;
 
 public class TicketActions {
     public static void create(Server server, String ticketType, Interaction interaction) {
+        User user = interaction.getUser();
+        Boolean isUserAdmin = BotActions.isUserTicketAdmin(user, server, ticketType);
+        if (!isUserAdmin & Mongo.getAmountOfTicketsOpenByUser(server.getIdAsString(), user.getIdAsString()) > 4) {
+            interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
+                interactionOriginalResponseUpdater.setContent("You already have the maximum amount of tickets open").update();
+            });
+            return;
+        }
         List<ChannelCategory> categories = server.getChannelCategories();
         boolean categoryExists = false;
         ChannelCategory category = null;
@@ -48,19 +56,19 @@ public class TicketActions {
         // create the ticket in either the new category or existing one:
         String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
         ServerTextChannel newTicket = Create.channel(server, ticketName, category);
-        Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName, interaction.getUser().getIdAsString());
+        Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName, user.getIdAsString());
         ServerTextChannelUpdater setPermissions = new ServerTextChannelUpdater(newTicket);
         setPermissions.addPermissionOverwrite(server.getEveryoneRole(),
                 new PermissionsBuilder()
                         .setAllDenied()
                         .build());
-        setPermissions.addPermissionOverwrite(interaction.getUser(),
+        setPermissions.addPermissionOverwrite(user,
                 new PermissionsBuilder()
                         .setAllowed(PermissionType.SEND_MESSAGES)
                         .setAllowed(PermissionType.READ_MESSAGE_HISTORY)
                         .setAllowed(PermissionType.VIEW_CHANNEL)
                         .build());
-        for(String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
+        for (String roleId : ticketHashTable.get(ticketType).rolesThatCanSeeTicketsDefault) {
             Optional<Role> role = server.getRoleById(roleId);
             if (role.isPresent()) {
                 Role trueRole = role.get();
