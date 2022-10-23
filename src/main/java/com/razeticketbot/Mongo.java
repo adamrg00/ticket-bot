@@ -22,7 +22,7 @@ public class Mongo {
         mongoClient = MongoClients.create("mongodb://localhost:27017");
         ticketsDatabase = mongoClient.getDatabase("tickets");
     }
-    public static String getTicketName(String ticketType, String serverId) {
+    public static String getTicketName(String ticketType, String serverId, String ticketValue) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         MongoCursor<Document> iterator = serverTicketsCollection.find(eq("ticket-type", ticketType)).iterator();
         int amountOfTickets = 1;
@@ -36,7 +36,7 @@ public class Mongo {
         }
         String amountOfTicketsString = Integer.toString(amountOfTickets);
         int amountOfZeros = 5 - amountOfTicketsString.length();
-        return ticketType.replaceAll(" ", "-").toLowerCase() + "-" + "0".repeat(amountOfZeros) + amountOfTicketsString;
+        return ticketValue + "-" + "0".repeat(amountOfZeros) + amountOfTicketsString;
     }
     public static void createTicket(String ticketType, ServerTextChannel channel, String serverId, String ticketName, String creatorUserId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);;

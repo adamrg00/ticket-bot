@@ -29,7 +29,7 @@ import static com.razeticketbot.Main.MAXIMUM_OPEN_TICKETS_PER_USER;
 import static com.razeticketbot.Main.ticketHashTable;
 
 public class TicketActions {
-    public static void create(Server server, String ticketType, Interaction interaction) {
+    public static void create(Server server, String ticketType, Interaction interaction, String ticketValue) {
         User user = interaction.getUser();
         Boolean isUserAdmin = BotActions.isUserTicketAdmin(user, server, ticketType);
         if (!isUserAdmin & Mongo.getAmountOfTicketsOpenByUser(server.getIdAsString(), user.getIdAsString()) >= MAXIMUM_OPEN_TICKETS_PER_USER) {
@@ -55,7 +55,7 @@ public class TicketActions {
             category = Create.category(server, ticketType);
         }
         // create the ticket in either the new category or existing one:
-        String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString());
+        String ticketName = Mongo.getTicketName(ticketType, server.getIdAsString(), ticketValue);
         ServerTextChannel newTicket = Create.channel(server, ticketName, category);
         Mongo.createTicket(ticketType, newTicket, server.getIdAsString(), ticketName, user.getIdAsString());
         ServerTextChannelUpdater setPermissions = new ServerTextChannelUpdater(newTicket);

@@ -19,11 +19,11 @@ public class Main {
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
     final static Ticket general_support = new Ticket("General Support",
-            "general_support",
+            "support",
             "Click here to choose general support ticket",
             new String[]{"1031292038265704600"});
     final static Ticket player_report =  new Ticket("Player Report",
-            "player_report",
+            "report",
             "Click here to choose player report ticket",
             new String[]{"1031292038265704600"});
     final static Ticket[] tickets ={general_support, player_report};
@@ -66,10 +66,11 @@ public class Main {
             }
             // get the type of ticket and check for the server
             String ticketType = options.get(0).getLabel();
+            String ticketValue = options.get(0).getValue();
             Optional<Server> optionalServer = interaction.getServer();
             if (optionalServer.isPresent()) {
                 Server server = optionalServer.get();
-                TicketActions.create(server, ticketType, interaction);
+                TicketActions.create(server, ticketType, interaction, ticketValue);
                 // handle very impossible occurence of the button being pressed in dms:
             } else {
                 System.out.println("interaction did not take place in a server");
