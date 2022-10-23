@@ -90,6 +90,14 @@ public class TicketActions {
         interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
             interactionOriginalResponseUpdater.setContent("Ticket has been created : <#" + newTicket.getIdAsString() + ">").update();
         });
+        String ticketMessageToEmbed = ticketHashTable.get(ticketType).ticketSpecificMessageOnOpen;
+        EmbedBuilder ticketEmbed = new EmbedBuilder()
+                .addField(ticketName, ticketMessageToEmbed)
+                .setColor(Color.BLUE);
+        new MessageBuilder()
+                .setContent("<@" + user.getIdAsString() + "> Thank you for opening a ticket, please read the message below!")
+                .addEmbed(ticketEmbed)
+                .send(newTicket);
     }
     public static void open(DiscordApi api, ServerTextChannel channel, User commandAuthor, Server server) {
         ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channel.getIdAsString(), server.getIdAsString());

@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="475be32a-f445-4dbf-9b1a-ea06b49dc419" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

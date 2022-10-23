@@ -21,11 +21,13 @@ public class Main {
     final static Ticket general_support = new Ticket("General Support",
             "support",
             "Click here to choose general support ticket",
-            new String[]{"1031292038265704600"});
+            new String[]{"1031292038265704600"},
+            "Thanks for reaching out to the staff team, please explain your need for support in detail");
     final static Ticket player_report =  new Ticket("Player Report",
             "report",
             "Click here to choose player report ticket",
-            new String[]{"1031292038265704600"});
+            new String[]{"1031292038265704600"},
+            "Thanks for reaching out to the staff team, please explain your report in detail");
     final static Ticket[] tickets ={general_support, player_report};
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
