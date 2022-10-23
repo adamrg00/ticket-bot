@@ -37,7 +37,7 @@ public class Main {
         ticketHashTable.put(player_report.name, player_report);
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
-                .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.G500Kp.KIjJE1tHtx80f6IvqGoVe40k3TqJVxMp0wx9sE")
+                .setToken(System.getenv("BOT-TOKEN"))
                 .login()
                 .join();
         Mongo.ConnectToDatabase();

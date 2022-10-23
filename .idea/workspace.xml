@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="475be32a-f445-4dbf-9b1a-ea06b49dc419" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Ticket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +17,7 @@
       <list>
         <option value="Tag Library Descriptor" />
         <option value="Class" />
+        <option value="HTTP Private Environment File" />
       </list>
     </option>
   </component>
@@ -50,6 +49,9 @@
 }</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <envs>
+        <env name="BOT-TOKEN" value="MTAyOTM3NTAxNDIxMTk2NDkzOA.G7i5TN.jwP4cDHZIKHcofHB228zl0d8Vx8ZDA1fyabWb0" />
+      </envs>
       <option name="MAIN_CLASS_NAME" value="com.razeticketbot.Main" />
       <module name="ticket-bot" />
       <extension name="coverage">
