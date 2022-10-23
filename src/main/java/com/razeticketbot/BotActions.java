@@ -51,7 +51,11 @@ public class BotActions {
             Server server = optServer.get();
             String channelId = channel.getIdAsString();
             String serverId = server.getIdAsString();
-            if (isUserTicketAdmin(event.getMessageAuthor().asUser().get(), server, "General Support") & Mongo.checkChannelIsTicket(channelId, serverId)){
+            if(! isUserTicketAdmin(event.getMessageAuthor().asUser().get(), server, "General Support")) {
+                channel.sendMessage("You do not have the permission to do this");
+                return;
+            }
+            if (Mongo.checkChannelIsTicket(channelId, serverId)){
                 switch(args[1]) {
                     case "close":
                         try {
@@ -116,7 +120,7 @@ public class BotActions {
                         break;
                 }
             } else {
-                channel.sendMessage("You cannot do that here!");
+                channel.sendMessage("This is not a ticket!");
             }
 
         }
