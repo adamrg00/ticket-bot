@@ -22,12 +22,12 @@ public class Main {
             "support",
             "Click here to choose general support ticket",
             new String[]{"1031292038265704600"},
-            "Thanks for reaching out to the staff team, please explain your need for support in detail");
+            "Please explain the support you're in need of in detail so that we can assist you. Do not ping anyone as we'll be with you shortly.");
     final static Ticket player_report =  new Ticket("Player Report",
             "report",
             "Click here to choose player report ticket",
             new String[]{"1031292038265704600"},
-            "Thanks for reaching out to the staff team, please explain your report in detail");
+            "Please explain your player report in detail so that we can assist you. Try and give us the PayPal or in-game ID of the user you're reporting. Do not ping anyone as we'll be with you shortly.");
     final static Ticket[] tickets ={general_support, player_report};
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
@@ -37,7 +37,7 @@ public class Main {
         ticketHashTable.put(player_report.name, player_report);
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
-                .setToken(System.getenv("BOT-TOKEN"))
+                .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.Gr3Py3.3R81VnH_o4rGMo6juda5Q8dM1kxpMD4fLfG-gQ")
                 .login()
                 .join();
         Mongo.ConnectToDatabase();
