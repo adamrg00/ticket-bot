@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 public class Main {
+    final static int MAXIMUM_OPEN_TICKETS_PER_USER = 5;
     final static String MAKE_A_TICKET_CATEGORY = "support";
     final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
     final static Ticket general_support = new Ticket("General Support",

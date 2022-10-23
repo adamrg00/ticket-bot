@@ -25,13 +25,14 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.razeticketbot.Main.MAXIMUM_OPEN_TICKETS_PER_USER;
 import static com.razeticketbot.Main.ticketHashTable;
 
 public class TicketActions {
     public static void create(Server server, String ticketType, Interaction interaction) {
         User user = interaction.getUser();
         Boolean isUserAdmin = BotActions.isUserTicketAdmin(user, server, ticketType);
-        if (!isUserAdmin & Mongo.getAmountOfTicketsOpenByUser(server.getIdAsString(), user.getIdAsString()) > 4) {
+        if (!isUserAdmin & Mongo.getAmountOfTicketsOpenByUser(server.getIdAsString(), user.getIdAsString()) >= MAXIMUM_OPEN_TICKETS_PER_USER) {
             interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
                 interactionOriginalResponseUpdater.setContent("You already have the maximum amount of tickets open").update();
             });
