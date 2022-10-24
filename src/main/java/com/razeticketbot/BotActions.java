@@ -14,6 +14,9 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.interaction.SlashCommand;
+import org.javacord.api.interaction.SlashCommandOption;
+import org.javacord.api.interaction.SlashCommandOptionType;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -42,8 +45,10 @@ public class BotActions {
         // add message author role check before switch statement!!!
         // add make sure this is a ticket check for channel!!!
         String[] args = message.split(" ");
-        if(args.length < 2) {return;}
-        if (!args[0].equals("ticket")) {return;}
+        if(args.length < 1) {return;}
+        if(args[0].length() == 0) {return;}
+        char firstChar = args[0].charAt(0);
+        if (! (firstChar == '$')) {return;}
         Optional<ServerTextChannel> optChannel = event.getServerTextChannel();
         Optional<Server> optServer = event.getServer();
         if(optChannel.isPresent() & optServer.isPresent()) {
@@ -56,15 +61,15 @@ public class BotActions {
                 return;
             }
             if (Mongo.checkChannelIsTicket(channelId, serverId)){
-                switch(args[1]) {
-                    case "close":
+                switch(args[0]) {
+                    case "$close":
                         try {
                             TicketActions.close(api, channel, event.getMessageAuthor().asUser().get(), server);
                         } catch (NoSuchElementException error) {
                             channel.sendMessage("Author of message unknown error");
                         }
                         break;
-                    case "delete":
+                    case "$delete":
                         try {
                             TicketActions.delete(api, channel, server, event.getMessageAuthor().asUser().get());
                         } catch (NoSuchElementException error) {
@@ -72,19 +77,19 @@ public class BotActions {
                         };
 
                         break;
-                    case "save":
+                    case "$save":
                         // NOT SURE IF WILL KEEP THIS FEATURE, BUT IF DO:
                         // SAVE TICKET MESSAGE HISTORY TO DATABASE
                         // LOG SAVE OF HISTORY
                         break;
-                    case "lock":
+                    case "$lock":
                         // TAKE A THIRD ARGUMENT (ROLE)
                         // IF ROLE IS GREATER THAN CURRENT SCOPE OF TICKET, REMOVE TICKET PERMS FOR ALL LOWER STAFF ROLES
                         // LOG THIS ACTION
                         break;
-                    case "add":
-                        if(args.length < 3) {return;}
-                        for(int i = 0; i < args.length - 2; i++) {
+                    case "$add":
+                        if(args.length < 2) {return;}
+                        for(int i = 0; i < args.length - 1; i++) {
                             String user = args[i + 2].replaceAll("[^0-9]", "");
                             api.getUserById(user).thenAccept(trueUser -> {
                                 try {
@@ -96,9 +101,9 @@ public class BotActions {
                         }
                         // LOG ACTION
                         break;
-                    case "remove":
-                        if(args.length < 3) {return;}
-                        for(int i = 0; i < args.length - 2; i++) {
+                    case "$remove":
+                        if(args.length < 2) {return;}
+                        for(int i = 0; i < args.length - 1; i++) {
                             String user = args[i + 2].replaceAll("[^0-9]", "");
                             api.getUserById(user).thenAccept(trueUser -> {
                                 try {
@@ -109,7 +114,7 @@ public class BotActions {
                             });
                         }
                         break;
-                    case "open":
+                    case "$open":
                         try {
                             TicketActions.open(api, channel, event.getMessageAuthor().asUser().get(), server);
                         } catch (NoSuchElementException error) {
@@ -173,4 +178,24 @@ public class BotActions {
         }
         return false;
     };
+//    public static void buildSlashCommands(DiscordApi api) {
+//        SlashCommand close = SlashCommand.with("close", "close current ticket so that people added to the ticket cannot speak until it is opened agaoin")
+//                .createGlobal(api)
+//                .join();
+//        SlashCommand delete = SlashCommand.with("delete", "delete the current ticket, saving a transcript to the database")
+//                .createGlobal(api)
+//                .join();
+//        SlashCommand add = SlashCommand.with("add", "add a user(s) to the current ticket")
+//                .createGlobal(api)
+//                .join();
+//        SlashCommand remove = SlashCommand.with("remove", "remove a user(s) from the current ticket",
+//                        Arrays.asList(
+//                                SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND)
+//                        ))
+//                .createGlobal(api)
+//                .join();
+//        SlashCommand open = SlashCommand.with("open", "re-open the current ticket, allowing user(s) to speak in it")
+//                .createGlobal(api)
+//                .join();
+//    }
 }

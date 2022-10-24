@@ -9,6 +9,7 @@ import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
+import org.javacord.api.interaction.SlashCommandInteraction;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -48,6 +49,7 @@ public class Main {
         for(Ticket ticket : tickets) {
             options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description));
         }
+        //BotActions.buildSlashCommands(api);
         // Add event to add the category, channel and message whenever bot is added to a new server.
         api.addServerJoinListener(event -> {
             //BotActions.onJoinNewServer(api, options);
@@ -57,6 +59,10 @@ public class Main {
             String message = event.getMessage().getContent().toLowerCase();
            BotActions.runTicketCommand(message, event, api);
         });
+//        api.addSlashCommandCreateListener(event -> {
+//            SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
+//            System.out.println(slashCommandInteraction.getCommandName());
+//        });
         // Handle what happens on click of menu options ( the creation of tickets )
         api.addSelectMenuChooseListener(event -> {
             List<SelectMenuOption> options = event.getSelectMenuInteraction().getChosenOptions();
