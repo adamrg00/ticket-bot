@@ -56,6 +56,12 @@ public class BotActions {
             Server server = optServer.get();
             String channelId = channel.getIdAsString();
             String serverId = server.getIdAsString();
+            if(args[0].equals("$build")) {
+                if(event.getMessageAuthor().isServerAdmin()) {
+                    BotActions.sendMenuToChannel(options, channel, server);
+                }
+                return;
+            }
             if(! isUserTicketAdmin(event.getMessageAuthor().asUser().get(), server, "General Support")) {
                 channel.sendMessage("You do not have the permission to do this");
                 return;
@@ -90,7 +96,7 @@ public class BotActions {
                     case "$add":
                         if(args.length < 2) {return;}
                         for(int i = 0; i < args.length - 1; i++) {
-                            String user = args[i + 2].replaceAll("[^0-9]", "");
+                            String user = args[i + 1].replaceAll("[^0-9]", "");
                             api.getUserById(user).thenAccept(trueUser -> {
                                 try {
                                     TicketActions.addUserToTicket(trueUser, channel, server, event.getMessageAuthor().asUser().get());
@@ -104,7 +110,7 @@ public class BotActions {
                     case "$remove":
                         if(args.length < 2) {return;}
                         for(int i = 0; i < args.length - 1; i++) {
-                            String user = args[i + 2].replaceAll("[^0-9]", "");
+                            String user = args[i + 1].replaceAll("[^0-9]", "");
                             api.getUserById(user).thenAccept(trueUser -> {
                                 try {
                                     TicketActions.removeUserFromTicket(trueUser, channel, server, event.getMessageAuthor().asUser().get());
