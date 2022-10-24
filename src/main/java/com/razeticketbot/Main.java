@@ -39,6 +39,7 @@ public class Main {
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
                 .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.Gr3Py3.3R81VnH_o4rGMo6juda5Q8dM1kxpMD4fLfG-gQ")
+                .setAllIntents()
                 .login()
                 .join();
         Mongo.ConnectToDatabase();
@@ -47,7 +48,7 @@ public class Main {
         System.out.println("INVITE LINK : " + api.createBotInvite(Permissions.fromBitmask(8)));
         // Populate the tickets list based on Ticket objects defined above.
         for(Ticket ticket : tickets) {
-            options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description));
+            options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description, "\uD83D\uDC4D"));
         }
         //BotActions.buildSlashCommands(api);
         // Add event to add the category, channel and message whenever bot is added to a new server.
