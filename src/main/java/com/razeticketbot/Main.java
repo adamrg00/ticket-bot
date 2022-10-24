@@ -50,7 +50,7 @@ public class Main {
         }
         // Add event to add the category, channel and message whenever bot is added to a new server.
         api.addServerJoinListener(event -> {
-            BotActions.onJoinNewServer(api, options);
+            //BotActions.onJoinNewServer(api, options);
         });
         //Handle eventualities needed when messages are sent!!!!
         api.addMessageCreateListener(event -> {
