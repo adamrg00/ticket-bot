@@ -2,13 +2,10 @@ package com.razeticketbot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenu;
 import org.javacord.api.entity.message.component.SelectMenuOption;
-import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.PermissionsBuilder;
@@ -16,15 +13,10 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.interaction.SlashCommand;
-import org.javacord.api.interaction.SlashCommandOption;
-import org.javacord.api.interaction.SlashCommandOptionType;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static com.razeticketbot.Main.*;
 
@@ -52,7 +44,7 @@ public class BotActions {
                                 .build())
                 .update();
     }
-    public static void runTicketCommand(String message, MessageCreateEvent event, DiscordApi api) {
+    public static void runCommand(String message, MessageCreateEvent event, DiscordApi api) {
         // add message author role check before switch statement!!!
         // add make sure this is a ticket check for channel!!!
         String[] args = message.split(" ");
@@ -67,6 +59,7 @@ public class BotActions {
             Server server = optServer.get();
             String channelId = channel.getIdAsString();
             String serverId = server.getIdAsString();
+            // custom commands not for tickets
             if(args[0].equals("$build")) {
                 if(event.getMessageAuthor().isServerAdmin()) {
                     BotActions.sendMenuToChannel(options, channel, server);
@@ -82,6 +75,7 @@ public class BotActions {
                 channel.sendMessage("You do not have the permission to do this");
                 return;
             }
+            // Ticket command switch statement
             if (Mongo.checkChannelIsTicket(channelId, serverId)){
                 switch(args[0]) {
                     case "$close":

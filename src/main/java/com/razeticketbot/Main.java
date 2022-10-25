@@ -9,7 +9,6 @@ import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
-import org.javacord.api.interaction.SlashCommandInteraction;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -69,7 +68,7 @@ public class Main {
         //Handle eventualities needed when messages are sent!!!!
         api.addMessageCreateListener(event -> {
             String message = event.getMessage().getContent().toLowerCase();
-           BotActions.runTicketCommand(message, event, api);
+           BotActions.runCommand(message, event, api);
         });
 
         api.addSelectMenuChooseListener(event -> {
