@@ -17,25 +17,39 @@ import java.util.List;
 import java.util.Optional;
 public class Main {
     final static int MAXIMUM_OPEN_TICKETS_PER_USER = 5;
-    final static String MAKE_A_TICKET_CATEGORY = "support";
-    final static String MAKE_A_TICKET_CHANNEL = "make-a-ticket";
-    final static Ticket general_support = new Ticket("General Support",
+    final static Ticket generalSupport = new Ticket("General Support",
             "support",
-            "Click here to choose general support ticket",
+            "Ask general questions or receive help for an unlisted issue",
             new String[]{"1031292038265704600"},
-            "Please explain the support you're in need of in detail so that we can assist you. Do not ping anyone as we'll be with you shortly.");
-    final static Ticket player_report =  new Ticket("Player Report",
+            "Please explain the support you're in need of in detail so that we can assist you. Do not ping anyone as we'll be with you shortly.",
+            "\uD83D\uDCAC");
+    final static Ticket playerReport =  new Ticket("Player Report",
             "report",
-            "Click here to choose player report ticket",
+            "Used to report a player for in-game or OOC actions",
             new String[]{"1031292038265704600"},
-            "Please explain your player report in detail so that we can assist you. Try and give us the PayPal or in-game ID of the user you're reporting. Do not ping anyone as we'll be with you shortly.");
-    final static Ticket[] tickets ={general_support, player_report};
+            "Please explain your player report in detail so that we can assist you. Try and give us the PayPal or in-game ID of the user you're reporting. Do not ping anyone as we'll be with you shortly.",
+            "\uD83D\uDD28");
+    final static Ticket banAppeal = new Ticket("Ban Appeal",
+            "appeal",
+            "Be ready to list your Ban ID (displayed upon connection)",
+                new String[]{"1031292038265704600"},
+            "Please fill out the following ban appeal form and wait patiently for a response.",
+            "\uD83D\uDEAB");
+    final static Ticket compensationRequest = new Ticket("Compensation Request",
+            "comp",
+            "Request compensation for lost items ($5k+)",
+            new String[]{"1031292038265704600"},
+            "Please explain the problem that occurred that caused you to lose your item(s). Do not ping staff as we'll get back to you as soon as we can. *This is not a guaranteed compensation, some form of proof is required.*",
+            "\uD83E\uDD11");
+    final static Ticket[] tickets ={generalSupport, playerReport, banAppeal, compensationRequest};
     // Initialise the List of menu options
     static List<SelectMenuOption> options = new ArrayList<>();
     static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
     public static void main(String[] args) {
-        ticketHashTable.put(general_support.name, general_support);
-        ticketHashTable.put(player_report.name, player_report);
+        ticketHashTable.put(generalSupport.name, generalSupport);
+        ticketHashTable.put(playerReport.name, playerReport);
+        ticketHashTable.put(banAppeal.name, banAppeal);
+        ticketHashTable.put(compensationRequest.name, compensationRequest);
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
                 .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.Gr3Py3.3R81VnH_o4rGMo6juda5Q8dM1kxpMD4fLfG-gQ")
@@ -48,7 +62,7 @@ public class Main {
         System.out.println("INVITE LINK : " + api.createBotInvite(Permissions.fromBitmask(8)));
         // Populate the tickets list based on Ticket objects defined above.
         for(Ticket ticket : tickets) {
-            options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description, "\uD83D\uDC4D"));
+            options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description, ticket.unicodeEmoji));
         }
         // Add event to add the category, channel and message whenever bot is added to a new server.
 

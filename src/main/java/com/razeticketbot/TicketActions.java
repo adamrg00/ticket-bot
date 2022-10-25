@@ -31,7 +31,7 @@ import static com.razeticketbot.Main.ticketHashTable;
 public class TicketActions {
     public static void create(Server server, String ticketType, Interaction interaction, String ticketValue) {
         User user = interaction.getUser();
-        Boolean isUserAdmin = BotActions.isUserTicketAdmin(user, server, ticketType);
+        boolean isUserAdmin = BotActions.isUserTicketAdmin(user, server, ticketType);
         if (!isUserAdmin & Mongo.getAmountOfTicketsOpenByUser(server.getIdAsString(), user.getIdAsString()) >= MAXIMUM_OPEN_TICKETS_PER_USER) {
             interaction.respondLater(true).thenAccept(interactionOriginalResponseUpdater -> {
                 interactionOriginalResponseUpdater.setContent("You already have the maximum amount of tickets open").update();
@@ -93,11 +93,16 @@ public class TicketActions {
         String ticketMessageToEmbed = ticketHashTable.get(ticketType).ticketSpecificMessageOnOpen;
         EmbedBuilder ticketEmbed = new EmbedBuilder()
                 .addField(ticketName, ticketMessageToEmbed)
-                .setColor(Color.BLUE);
+                .setColor(Color.BLUE)
+                .setFooter("Do not ping anyone as we will be with you shortly");
         new MessageBuilder()
                 .setContent("<@" + user.getIdAsString() + "> Thank you for opening a ticket, please read the message below!")
                 .addEmbed(ticketEmbed)
                 .send(newTicket);
+        if(ticketType.equals("Ban Appeal")) {
+            BotActions.sendBanAppealForm(newTicket);
+
+        }
     }
     public static void open(DiscordApi api, ServerTextChannel channel, User commandAuthor, Server server) {
         ArrayList<String> ticketUsers = Mongo.getUsersOfAticket(channel.getIdAsString(), server.getIdAsString());
