@@ -52,22 +52,13 @@ public class Main {
     static List<SelectMenuOption> options = new ArrayList<>();
     static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
     public static void main(String[] args) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder("node", "transcript.js");
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-            Process p = pb.start();
-
-        } catch(IOException ioe) {
-            System.out.println(ioe);
-        }
         ticketHashTable.put(generalSupport.name, generalSupport);
         ticketHashTable.put(playerReport.name, playerReport);
         ticketHashTable.put(banAppeal.name, banAppeal);
         ticketHashTable.put(compensationRequest.name, compensationRequest);
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
-                .setToken(System.getenv("BOT-TOKEN"))
+                .setToken(System.getenv("BOTTOKEN"))
                 .setAllIntents()
                 .login()
                 .join();

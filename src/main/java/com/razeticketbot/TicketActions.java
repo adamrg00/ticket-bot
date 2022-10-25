@@ -18,6 +18,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.Interaction;
 
 import java.awt.*;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
@@ -177,6 +178,14 @@ public class TicketActions {
         String channelId = channel.getIdAsString();
         String serverId = server.getIdAsString();
         Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
+        try {
+            ProcessBuilder pb = new ProcessBuilder("node", "transcript.js", channelId);
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            Process p = pb.start();
+        } catch(IOException ioe) {
+            System.out.println(ioe);
+        }
         channel.delete();
     };
     public static void removeUserFromTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
