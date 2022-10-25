@@ -1,5 +1,4 @@
 package com.razeticketbot;
-
 import org.bson.Document;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelCategory;
@@ -7,7 +6,6 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -23,11 +21,9 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static com.razeticketbot.Main.MAXIMUM_OPEN_TICKETS_PER_USER;
 import static com.razeticketbot.Main.ticketHashTable;
-
 public class TicketActions {
     public static void create(Server server, String ticketType, Interaction interaction, String ticketValue) {
         User user = interaction.getUser();

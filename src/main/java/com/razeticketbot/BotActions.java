@@ -1,5 +1,4 @@
 package com.razeticketbot;
-
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -19,9 +18,7 @@ import java.util.*;
 import java.util.List;
 
 import static com.razeticketbot.Main.*;
-
 public class BotActions {
-    // Sends the dropdowm menu to a channel (command only accessible by admins)
     public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel, Server server) {
         EmbedBuilder embed = new EmbedBuilder()
                 .addField(":hammer: Player Reports", "Select the player report button in the drop down menu below to open a player report. You will be invited to a #report-(number) channel where staff will be with you shortly. We will respond as soon as possible.")
@@ -139,8 +136,6 @@ public class BotActions {
 
 
     }
-
-    // Function to check if a user is staff for a certain ticket type
     public static boolean isUserTicketAdmin(User user, Server server, String ticketType) {
         Ticket typeOfTicket = ticketHashTable.get(ticketType);
         String[] adminRolesOfTicket = typeOfTicket.rolesThatCanSeeTicketsDefault;
@@ -168,5 +163,4 @@ public class BotActions {
                         + "\n NOTE 2: IF YOU HAVE BEEN BANNED BY THE ANTI CHEAT, PLEASE INCLUDE THE BAN ID IN TEXT FORM (NOT JUST THE PHOTO)\n");
         channel.sendMessage(banAppealFormEmbed);
     }
-
 }

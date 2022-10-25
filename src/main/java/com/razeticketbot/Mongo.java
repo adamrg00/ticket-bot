@@ -1,8 +1,6 @@
 package com.razeticketbot;
-
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
-
 public class Mongo {
     static MongoClient mongoClient;
     static MongoDatabase ticketsDatabase;
@@ -35,7 +32,7 @@ public class Mongo {
             iterator.close();
         }
         String amountOfTicketsString = Integer.toString(amountOfTickets);
-        int amountOfZeros = 5 - amountOfTicketsString.length();
+        int amountOfZeros = 4 - amountOfTicketsString.length();
         return ticketValue + "-" + "0".repeat(amountOfZeros) + amountOfTicketsString;
     }
     public static void createTicket(String ticketType, ServerTextChannel channel, String serverId, String ticketName, String creatorUserId) {
