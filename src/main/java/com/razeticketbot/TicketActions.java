@@ -201,7 +201,7 @@ public class TicketActions {
                                 .addInlineField("Users In Transcript", usersInTranscript);
 
                         event.getMessage().edit(embed);
-                        event.getMessage().edit("");
+                        event.getMessage().edit("------------");
                         ticketChannel.delete();
                     } catch (NoSuchElementException nsee) {
                         System.out.println(nsee);

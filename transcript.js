@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config();
 const serverId = process.argv[2];
 const channelId = process.argv[3];
 const serverTicketSavedChannels = {
-    ["1030491410954199071"] : "1034496481329172623",// Test Server
+    ["1030491410954199071"] : "1034510514144940092",// Test Server
     ["776550060732317737"] : "1016467420833140766" // Raze Server
 }
 if(!channelId || !serverId) {
