@@ -8,6 +8,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.javacord.api.entity.channel.ServerTextChannel;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,10 +95,10 @@ public class Mongo {
             System.err.println(me);
         }
     }
-    public static void saveTranscriptOfTicket(ArrayList<Document> arrayListOfMessages, String channelId, String serverId) {
+    public static void saveTranscriptOfTicket(URL transcriptUrl, String channelId, String serverId) {
         MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
         Document query = new Document().append("channel-id", channelId);
-        Bson updates = Updates.combine(Updates.set("transcript", arrayListOfMessages),  Updates.set("deleted", true));
+        Bson updates = Updates.combine(Updates.set("transcript", transcriptUrl.toString()),  Updates.set("deleted", true));
         try {
             UpdateResult result = serverTicketsCollection.updateOne(query, updates);
         } catch (MongoException me) {

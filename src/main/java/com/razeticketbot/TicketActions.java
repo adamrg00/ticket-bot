@@ -5,6 +5,7 @@ import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
@@ -19,6 +20,7 @@ import org.javacord.api.interaction.Interaction;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
@@ -156,37 +158,36 @@ public class TicketActions {
     public static void delete(DiscordApi api, ServerTextChannel channel, Server server, User commandAuthor) {
         EmbedBuilder notification = new EmbedBuilder()
                 .setDescription("Has Marked the ticket for deletion")
-                .addField("", "ticket will be deleted momentarily")
+                .addField("", "ticket will be deleted momentarily...")
                 .setAuthor(commandAuthor)
                 .setColor(Color.CYAN);
         new MessageBuilder().addEmbed(notification).send(channel);
             // SAVE TICKET MESSAGE HISTORY TO DATABASE
         Iterator<Message> messageIterator = channel.getMessagesAsStream().iterator();
         ArrayList<Document> messageSetArrayList = new ArrayList<>();
-        while (messageIterator.hasNext()) {
-            Message currentMessage = messageIterator.next();
-            String messageContent = currentMessage.getContent();
-            String messageAuthor = currentMessage.getAuthor().getIdAsString();
-            Instant timestamp = currentMessage.getCreationTimestamp();
-            if (!messageContent.equals("")) {
-                Document doc = new Document().append("author", messageAuthor)
-                        .append("content", messageContent)
-                        .append("timestamp", timestamp);
-                messageSetArrayList.add(0, doc);
-            }
-        }
         String channelId = channel.getIdAsString();
         String serverId = server.getIdAsString();
-        Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
+
+        api.addMessageCreateListener(event -> {
+            if(event.getMessage().getContent().equals("transcript") & event.getMessageAuthor().isBotUser()) {
+                MessageAttachment transcript = event.getMessage().getAttachments().get(0);
+                URL transcriptUrl = transcript.getUrl();
+                Mongo.saveTranscriptOfTicket(transcriptUrl, channelId, serverId);
+                try {
+                    event.getChannel().asServerTextChannel().get().delete();
+                } catch (NoSuchElementException nsee) {
+                    System.out.println(nsee);
+                }
+            }
+        });
         try {
-            ProcessBuilder pb = new ProcessBuilder("node", "transcript.js", channelId);
+            ProcessBuilder pb = new ProcessBuilder("node", "transcript.js", serverId, channelId);
             pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process p = pb.start();
         } catch(IOException ioe) {
             System.out.println(ioe);
         }
-        channel.delete();
     };
     public static void removeUserFromTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
         Collection<PermissionType> userPermissions = channel.getOverwrittenPermissions(user).getAllowedPermission();
