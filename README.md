@@ -1,6 +1,6 @@
 # ticket-bot
-A Discord Bot written in java 
-Provides a ticket system which allows members of a server to create a variety of types of channels to speak with the staff team of that server in a streamlined and efficient way.
+- A Discord Bot written in java, utilizing the JavaCord https://javacord.org/ library.
+- Provides a ticket system which allows members of a server to create a variety of types of channels to speak with the staff team of that server in a streamlined and efficient way.
 
 ## Setting up the bot for your server
 
