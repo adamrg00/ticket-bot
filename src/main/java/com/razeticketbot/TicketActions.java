@@ -78,9 +78,6 @@ public class TicketActions {
                         new PermissionsBuilder(rolePerms)
                                 .setAllAllowed()
                                 .build());
-                // PERMISSIONS SET DOES NOT WORK!! SOME PERMISSIONS GET RESET IMPROPERLY, WAIT ON JAVADOC DISCORD FOR SUPPORT HERE
-            } else {
-                System.out.println("Role ID " + role + " does not exist!!!");
             }
         }
         setPermissions.update();
@@ -184,8 +181,6 @@ public class TicketActions {
         String channelId = channel.getIdAsString();
         String serverId = server.getIdAsString();
         Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
-        // LOG DELETION OF TICKET IN A CHANNEL
-        // ACTUALLY DELETE CHANNEL
         channel.delete();
     };
     public static void removeUserFromTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
