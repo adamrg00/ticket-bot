@@ -105,4 +105,10 @@ public class Mongo {
             System.err.println(me);
         }
     }
+
+    public static Document getTicket(String channelId, String serverId) {
+        MongoCollection<Document> serverTicketsCollection = ticketsDatabase.getCollection(serverId);
+        return serverTicketsCollection.find(eq("channel-id", channelId)).first();
+    }
+
 }
