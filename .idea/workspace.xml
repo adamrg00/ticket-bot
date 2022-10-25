@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="475be32a-f445-4dbf-9b1a-ea06b49dc419" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/BotActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/BotActions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Create.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Create.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/Mongo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/razeticketbot/TicketActions.java" afterDir="false" />
-    </list>
+    <list default="true" id="475be32a-f445-4dbf-9b1a-ea06b49dc419" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,7 +48,7 @@
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <envs>
-        <env name="BOT-TOKEN" value="MTAyOTM3NTAxNDIxMTk2NDkzOA.G7i5TN.jwP4cDHZIKHcofHB228zl0d8Vx8ZDA1fyabWb0" />
+        <env name="BOT-TOKEN" value="MTAyOTM3NTAxNDIxMTk2NDkzOA.GOA_qZ.uKAPhEOxa0k0jgFLMKhxaa0AZ33M5jgktcqHqk" />
       </envs>
       <option name="MAIN_CLASS_NAME" value="com.razeticketbot.Main" />
       <module name="ticket-bot" />

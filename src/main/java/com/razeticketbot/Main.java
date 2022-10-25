@@ -56,7 +56,7 @@ public class Main {
         ticketHashTable.put(compensationRequest.name, compensationRequest);
         // Login the bot
         DiscordApi api = new DiscordApiBuilder()
-                .setToken("MTAyOTM3NTAxNDIxMTk2NDkzOA.Gr3Py3.3R81VnH_o4rGMo6juda5Q8dM1kxpMD4fLfG-gQ")
+                .setToken(System.getenv("BOT-TOKEN"))
                 .setAllIntents()
                 .login()
                 .join();
