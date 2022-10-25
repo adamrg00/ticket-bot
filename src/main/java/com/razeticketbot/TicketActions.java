@@ -157,11 +157,10 @@ public class TicketActions {
     }
     public static void delete(DiscordApi api, ServerTextChannel channel, Server server, User commandAuthor) {
         EmbedBuilder notification = new EmbedBuilder()
-                .setDescription("Has Marked the ticket for deletion")
-                .addField("", "ticket will be deleted momentarily...")
+                .addField("Has Marked the ticket for deletion", "ticket will be deleted momentarily...")
                 .setAuthor(commandAuthor)
                 .setColor(Color.CYAN);
-        new MessageBuilder().addEmbed(notification).send(channel);
+        channel.sendMessage(notification);
             // SAVE TICKET MESSAGE HISTORY TO DATABASE
         Iterator<Message> messageIterator = channel.getMessagesAsStream().iterator();
         ArrayList<Document> messageSetArrayList = new ArrayList<>();
@@ -169,28 +168,45 @@ public class TicketActions {
         String serverId = server.getIdAsString();
         // Listens for when transcript is made, then fires the final event for deleting a ticket
         api.addMessageCreateListener(event -> {
-            if(event.getMessage().getContent().equals("transcript") & event.getMessageAuthor().isBotUser()) {
-                ServerTextChannel ticketChannel = event.getServerTextChannel().get();
-                MessageAttachment transcript = event.getMessage().getAttachments().get(0);
-                System.out.println(transcript);
-                URL transcriptUrl = transcript.getUrl();
-                Mongo.saveTranscriptOfTicket(transcriptUrl, channelId, serverId);
-                Document ticket = Mongo.getTicket(ticketChannel.getIdAsString(), ticketChannel.getServer().getIdAsString());
-                String ticketCreator = ticket.get("ticket-creator").toString();
-                User user = api.getUserById(ticketCreator).join();
-                EmbedBuilder embed = new EmbedBuilder()
-                        .setAuthor(user)
-                        .addInlineField("Ticket Creator", "<@" + user.getIdAsString() + ">")
-                        .addInlineField("Ticket Name", ticket.get("ticket-name").toString())
-                        .addInlineField("Ticket Type", ticket.get("ticket-type").toString());
-                new MessageBuilder()
-                        .addEmbed(embed)
-                        .send(channel);
-//                try {
-//                    event.getChannel().asServerTextChannel().get().delete();
-//                } catch (NoSuchElementException nsee) {
-//                    System.out.println(nsee);
-//                }
+            String message = event.getMessage().getContent();
+            if (message != null) {
+                String[] args = message.split(" ");
+
+                if (args[0].equals("transcript") & event.getMessageAuthor().isBotUser()) {
+                    try {
+                        ServerTextChannel ticketChannel = (ServerTextChannel) server.getChannelById(args[1]).get();
+                        MessageAttachment transcript = event.getMessage().getAttachments().get(0);
+                        URL transcriptUrl = transcript.getUrl();
+                        Mongo.saveTranscriptOfTicket(transcriptUrl, channelId, serverId);
+                        Document ticket = Mongo.getTicket(ticketChannel.getIdAsString(), ticketChannel.getServer().getIdAsString());
+                        // Create the users in transcript string
+                        String usersInTranscript = "";
+                        ArrayList<String> users = (ArrayList<String>) ticket.get("added-users");
+
+                        for(String user : users) {
+                            User realUser = api.getUserById(user).join();
+                            String userId = api.getUserById(user).join().getDiscriminatedName();
+                            usersInTranscript = usersInTranscript + "<@" + user + "> : " + userId + "\n";
+                        }
+                        String ticketCreator = ticket.get("ticket-creator").toString();
+                        User user = api.getUserById(ticketCreator).join();
+                        EmbedBuilder embed = new EmbedBuilder()
+                                .setTitle("Ticket Closed")
+                                .setColor(Color.WHITE)
+                                .setAuthor(user)
+                                .addInlineField("Ticket Creator", "<@" + user.getIdAsString() + ">")
+                                .addInlineField("Ticket Name", ticket.get("ticket-name").toString())
+                                .addInlineField("Ticket Type", ticket.get("ticket-type").toString())
+                                .addInlineField("Download Ticket", "[Direct Link](" + transcriptUrl.toString() + ")")
+                                .addInlineField("Users In Transcript", usersInTranscript);
+
+                        event.getMessage().edit(embed);
+                        event.getMessage().edit("");
+                        ticketChannel.delete();
+                    } catch (NoSuchElementException nsee) {
+                        System.out.println(nsee);
+                    }
+                }
             }
         });
         try {
