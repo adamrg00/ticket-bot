@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 public class Main {
     final static int MAXIMUM_OPEN_TICKETS_PER_USER = 5;
+    // Until implementation of new method, if roles need adding etc, just add to system here
     static final String TEST_SERVER_ROLE = "1031292038265704600";
     static final String RAZE_SUPPORT = "827098973491560448";
     static final String RAZE_MOD = "776567102080548874";
