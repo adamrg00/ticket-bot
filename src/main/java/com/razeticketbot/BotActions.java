@@ -21,6 +21,7 @@ import java.util.List;
 import static com.razeticketbot.Main.*;
 
 public class BotActions {
+    // Sends the dropdowm menu to a channel (command only accessible by admins)
     public static void sendMenuToChannel(List<SelectMenuOption> options, TextChannel channel, Server server) {
         EmbedBuilder embed = new EmbedBuilder()
                 .addField(":hammer: Player Reports", "Select the player report button in the drop down menu below to open a player report. You will be invited to a #report-(number) channel where staff will be with you shortly. We will respond as soon as possible.")
@@ -37,6 +38,7 @@ public class BotActions {
                         1,
                         options)))
                 .send(channel);
+        // Auto-denies everyone permission to type in the channel
         new ServerTextChannelUpdater((ServerTextChannel) channel)
                 .addPermissionOverwrite(server.getEveryoneRole()
                         , new PermissionsBuilder()
@@ -45,8 +47,7 @@ public class BotActions {
                 .update();
     }
     public static void runCommand(String message, MessageCreateEvent event, DiscordApi api) {
-        // add message author role check before switch statement!!!
-        // add make sure this is a ticket check for channel!!!
+        // Split the command message into each argument, make sure command is valid format, and sent in a server
         String[] args = message.split(" ");
         if(args.length < 1) {return;}
         if(args[0].length() == 0) {return;}
@@ -139,6 +140,7 @@ public class BotActions {
 
     }
 
+    // Function to check if a user is staff for a certain ticket type
     public static boolean isUserTicketAdmin(User user, Server server, String ticketType) {
         Ticket typeOfTicket = ticketHashTable.get(ticketType);
         String[] adminRolesOfTicket = typeOfTicket.rolesThatCanSeeTicketsDefault;

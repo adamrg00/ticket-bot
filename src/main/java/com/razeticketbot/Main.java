@@ -16,28 +16,33 @@ import java.util.List;
 import java.util.Optional;
 public class Main {
     final static int MAXIMUM_OPEN_TICKETS_PER_USER = 5;
+    static final String TEST_SERVER_ROLE = "1031292038265704600";
+    static final String RAZE_SUPPORT = "827098973491560448";
+    static final String RAZE_MOD = "776567102080548874";
+    static final String RAZE_ADMIN = "776567056397107200";
+    static final String RAZE_MGMT = "776570559752175617";
     final static Ticket generalSupport = new Ticket("General Support",
             "support",
             "Ask general questions or receive help for an unlisted issue",
-            new String[]{"1031292038265704600"},
+            new String[]{TEST_SERVER_ROLE, RAZE_SUPPORT, RAZE_MOD, RAZE_ADMIN, RAZE_MGMT},
             "Please explain the support you're in need of in detail so that we can assist you. Do not ping anyone as we'll be with you shortly.",
             "\uD83D\uDCAC");
     final static Ticket playerReport =  new Ticket("Player Report",
             "report",
             "Used to report a player for in-game or OOC actions",
-            new String[]{"1031292038265704600"},
+            new String[]{TEST_SERVER_ROLE, RAZE_MOD, RAZE_ADMIN, RAZE_MGMT},
             "Please explain your player report in detail so that we can assist you. Try and give us the PayPal or in-game ID of the user you're reporting. Do not ping anyone as we'll be with you shortly.",
             "\uD83D\uDD28");
     final static Ticket banAppeal = new Ticket("Ban Appeal",
             "appeal",
             "Be ready to list your Ban ID (displayed upon connection)",
-                new String[]{"1031292038265704600"},
+                new String[]{TEST_SERVER_ROLE, RAZE_MOD, RAZE_ADMIN, RAZE_MGMT},
             "Please fill out the following ban appeal form and wait patiently for a response.",
             "\uD83D\uDEAB");
     final static Ticket compensationRequest = new Ticket("Compensation Request",
             "comp",
             "Request compensation for lost items ($5k+)",
-            new String[]{"1031292038265704600"},
+            new String[]{TEST_SERVER_ROLE, RAZE_SUPPORT, RAZE_MOD, RAZE_ADMIN, RAZE_MGMT},
             "Please explain the problem that occurred that caused you to lose your item(s). Do not ping staff as we'll get back to you as soon as we can. *This is not a guaranteed compensation, some form of proof is required.*",
             "\uD83E\uDD11");
     final static Ticket[] tickets ={generalSupport, playerReport, banAppeal, compensationRequest};
