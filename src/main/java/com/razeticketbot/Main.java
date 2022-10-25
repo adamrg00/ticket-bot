@@ -50,21 +50,14 @@ public class Main {
         for(Ticket ticket : tickets) {
             options.add(SelectMenuOption.create(ticket.name, ticket.value, ticket.description, "\uD83D\uDC4D"));
         }
-        //BotActions.buildSlashCommands(api);
         // Add event to add the category, channel and message whenever bot is added to a new server.
-        api.addServerJoinListener(event -> {
-            //BotActions.onJoinNewServer(api, options);
-        });
+
         //Handle eventualities needed when messages are sent!!!!
         api.addMessageCreateListener(event -> {
             String message = event.getMessage().getContent().toLowerCase();
            BotActions.runTicketCommand(message, event, api);
         });
-//        api.addSlashCommandCreateListener(event -> {
-//            SlashCommandInteraction slashCommandInteraction = event.getSlashCommandInteraction();
-//            System.out.println(slashCommandInteraction.getCommandName());
-//        });
-        // Handle what happens on click of menu options ( the creation of tickets )
+
         api.addSelectMenuChooseListener(event -> {
             List<SelectMenuOption> options = event.getSelectMenuInteraction().getChosenOptions();
             Interaction interaction = event.getInteraction();

@@ -138,41 +138,7 @@ public class BotActions {
 
 
     }
-//    public static void onJoinNewServer(DiscordApi api, List<SelectMenuOption> options) {
-//        Collection<Server> servers = api.getServers();
-//        for(Server server : servers) {
-//            Collection<ChannelCategory> categories = server.getChannelCategories();
-//            boolean doesCategoryExist = false;
-//            List<RegularServerChannel> channelsInMakeATicketCategory = null;
-//            ChannelCategory useCategory = null;
-//            for(ChannelCategory category : categories) {
-//                if(Objects.equals(category.getName(), MAKE_A_TICKET_CATEGORY)) {
-//                    useCategory = category;
-//                    doesCategoryExist = true;
-//                    channelsInMakeATicketCategory = category.getChannels();
-//                    break;
-//                }
-//            }
-//            if (!doesCategoryExist) {
-//                useCategory = Create.category(server, MAKE_A_TICKET_CATEGORY);
-//                channelsInMakeATicketCategory = useCategory.getChannels();
-//            }
-//            boolean doesChannelExist = false;
-//            RegularServerChannel useChannel = null;
-//            for(RegularServerChannel channel : channelsInMakeATicketCategory) {
-//                if(Objects.equals(channel.getName(), MAKE_A_TICKET_CHANNEL)) {
-//                    useChannel = channel;
-//                    doesChannelExist = true;
-//                    break;
-//                }
-//            }
-//            if(!doesChannelExist) {
-//                useChannel = Create.channel(server, MAKE_A_TICKET_CHANNEL, useCategory);
-//                BotActions.sendMenuToChannel(options, (TextChannel) useChannel, server);
-//            }
-//
-//        }
-//    }
+
     public static boolean isUserTicketAdmin(User user, Server server, String ticketType) {
         Ticket typeOfTicket = ticketHashTable.get(ticketType);
         String[] adminRolesOfTicket = typeOfTicket.rolesThatCanSeeTicketsDefault;
@@ -184,24 +150,5 @@ public class BotActions {
         }
         return false;
     };
-//    public static void buildSlashCommands(DiscordApi api) {
-//        SlashCommand close = SlashCommand.with("close", "close current ticket so that people added to the ticket cannot speak until it is opened agaoin")
-//                .createGlobal(api)
-//                .join();
-//        SlashCommand delete = SlashCommand.with("delete", "delete the current ticket, saving a transcript to the database")
-//                .createGlobal(api)
-//                .join();
-//        SlashCommand add = SlashCommand.with("add", "add a user(s) to the current ticket")
-//                .createGlobal(api)
-//                .join();
-//        SlashCommand remove = SlashCommand.with("remove", "remove a user(s) from the current ticket",
-//                        Arrays.asList(
-//                                SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND)
-//                        ))
-//                .createGlobal(api)
-//                .join();
-//        SlashCommand open = SlashCommand.with("open", "re-open the current ticket, allowing user(s) to speak in it")
-//                .createGlobal(api)
-//                .join();
-//    }
+
 }
