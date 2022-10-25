@@ -166,31 +166,28 @@ public class TicketActions {
                 .setAuthor(commandAuthor)
                 .setColor(Color.CYAN);
         new MessageBuilder().addEmbed(notification).send(channel);
-        CompletableFuture<MessageSet> tempMessageSet = channel.getMessages(9999999);
-        tempMessageSet.thenAccept(messages -> {
             // SAVE TICKET MESSAGE HISTORY TO DATABASE
-            Iterator<Message> messageIterator = messages.stream().iterator();
-            ArrayList<Document> messageSetArrayList = new ArrayList<>();
-            while (messageIterator.hasNext()) {
-                Message currentMessage = messageIterator.next();
-                String messageContent = currentMessage.getContent();
-                String messageAuthor = currentMessage.getAuthor().getIdAsString();
-                Instant timestamp = currentMessage.getCreationTimestamp();
-                if (!messageContent.equals("")) {
-                    Document doc = new Document().append("author", messageAuthor)
-                                    .append("content", messageContent)
-                                            .append("timestamp", timestamp);
-                    messageSetArrayList.add(doc);
-                }
+        Iterator<Message> messageIterator = channel.getMessagesAsStream().iterator();
+        ArrayList<Document> messageSetArrayList = new ArrayList<>();
+        while (messageIterator.hasNext()) {
+            Message currentMessage = messageIterator.next();
+            String messageContent = currentMessage.getContent();
+            String messageAuthor = currentMessage.getAuthor().getIdAsString();
+            Instant timestamp = currentMessage.getCreationTimestamp();
+            if (!messageContent.equals("")) {
+                Document doc = new Document().append("author", messageAuthor)
+                        .append("content", messageContent)
+                        .append("timestamp", timestamp);
+                messageSetArrayList.add(0, doc);
             }
-            String channelId = channel.getIdAsString();
-            String serverId = server.getIdAsString();
-            Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
-            // LOG DELETION OF TICKET IN A CHANNEL
-            // ACTUALLY DELETE CHANNEL
-            channel.delete();
-        });
-    }
+        }
+        String channelId = channel.getIdAsString();
+        String serverId = server.getIdAsString();
+        Mongo.saveTranscriptOfTicket(messageSetArrayList, channelId, serverId);
+        // LOG DELETION OF TICKET IN A CHANNEL
+        // ACTUALLY DELETE CHANNEL
+        channel.delete();
+    };
     public static void removeUserFromTicket(User user, ServerTextChannel channel, Server server, User commandAuthor) {
         Collection<PermissionType> userPermissions = channel.getOverwrittenPermissions(user).getAllowedPermission();
         if (userPermissions.contains(PermissionType.VIEW_CHANNEL)) {
