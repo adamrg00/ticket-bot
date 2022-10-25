@@ -9,6 +9,8 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -50,6 +52,15 @@ public class Main {
     static List<SelectMenuOption> options = new ArrayList<>();
     static Hashtable<String, Ticket> ticketHashTable = new Hashtable<>(5);
     public static void main(String[] args) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("node", "transcript.js");
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            Process p = pb.start();
+
+        } catch(IOException ioe) {
+            System.out.println(ioe);
+        }
         ticketHashTable.put(generalSupport.name, generalSupport);
         ticketHashTable.put(playerReport.name, playerReport);
         ticketHashTable.put(banAppeal.name, banAppeal);
