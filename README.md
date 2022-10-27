@@ -14,3 +14,4 @@
 - Add the `[server_id] : channel id` to `serverTicketSavedChannels` in `transcript.js` for the channel to send transcripts / ticket close messages to.
 - Run Main.main()
   - This should print the invite link needed to invite your bot to your server, if you havent done that already.
+    - Once the bot is running, one can use the command `$build` in a channel to create the ticket menu, allowing use to begin. Other commands can be found in the code
