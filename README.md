@@ -6,7 +6,8 @@
 
 ## Setting up the bot for your server
 
-- Create an application -> bot in the discord developer portal https://discord.com/developers/applications
+- Make sure that you have a MongoDB Server running : can download [here](https://www.mongodb.com/docs/manual/installation/) or change the URL in the Mongo class if using an atlas deployment.
+- Create a [discord application](https://discord.com/developers/applications) -> then create a bot inside of your application
 - Add your bot's token to the BOTTOKEN environment variable AND to a .env file in the root of the project
 - Set up the Ticket objects to suit your server, making sure to include the correct role-ids for your server
 - Adjust role based priviledges to however you need
