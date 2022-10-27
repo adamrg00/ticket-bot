@@ -2,7 +2,7 @@
 - A Discord Bot written in java, utilizing the [JavaCord](https://javacord.org/) library.
 - Provides a ticket-based system, allowing members of a server to create a variety of types of ***customisable and reconfigurable*** channels to speak with the staff team of that server in a streamlined fashion.
 - Includes a plethora of commands to use in tickets for maximum efficiency.
-- Current iteration has been optimised for the Raze Network Discord server, but it is easily adaptable to many different needs.
+- Current iteration has been optimised for the workflow of a specific discord server, but it is easily adaptable to many different needs.
 
 ## Setting up the bot for your server
 
